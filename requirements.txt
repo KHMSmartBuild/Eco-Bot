@@ -1,0 +1,71 @@
+# Web Framework
+flask==1.1.2  # Lightweight WSGI web application framework
+
+# Data Handling
+pandas==1.2.3  # Data analysis and manipulation tool
+numpy==1.20.2  # Fundamental package for array computing with Python
+
+# Code Generation
+pyautogen==<version>  # (Replace <version> with the actual version) Tool for automatic code generation
+
+# Debugging
+icecream==2.1.0  # Inspect variables, expressions, and program execution with simple ic() calls
+
+# Containerization
+docker==5.0.0  # A platform for developers and sysadmins to build, share, and run applications with containers
+
+# Version Control
+GitPython==3.1.14  # Python library used to interact with Git repositories
+
+# Web Application Framework
+streamlit==0.82.0  # Open-source app framework for Machine Learning and Data Science projects
+
+# Natural Language Processing
+langchain==<version>  # (Replace <version> with the actual version) Tool for natural language processing
+openai==<version>
+whisper==<version>
+# ... (previous dependencies)
+
+# Asynchronous Programming
+asyncio==3.4.3  # Asynchronous I/O, event loop, coroutines and tasks
+aiohttp==3.7.4  # Asynchronous HTTP client/server framework
+
+# Digital Twins
+azure-digital-twins==0.2.1  # Azure Digital Twins SDK for Python
+
+# Computer Vision
+opencv-python==4.5.2  # OpenCV (Open Source Computer Vision Library) bindings for Python
+opencv-python-headless==4.5.2  # Headless (no GUI) OpenCV bindings for Python
+torchvision==0.9.1  # Datasets, Transforms and Models specific to Computer Vision
+
+# Machine Learning Framework
+torch==1.8.1  # PyTorch is an open-source machine learning framework
+
+# Avatar Creation
+PILLOW==8.2.0  # Python Imaging Library Fork, for creating avatars and other image processing tasks
+
+# ... (any other dependencies)
+# ... (previous dependencies)
+
+# CLIP (Contrastive Language–Image Pretraining)
+clip==0.1  # OpenAI's CLIP model for vision-and-language tasks
+
+# Natural Language Processing (NLP)
+transformers==4.5.1  # Library for state-of-the-art NLP models like BERT, GPT-2/3, T5, etc.
+
+# Visualization
+matplotlib==3.4.2  # 2D plotting library for creating static, animated, and interactive visualizations
+seaborn==0.11.1  # Statistical data visualization library based on Matplotlib
+
+# Web Scraping
+beautifulsoup4==4.9.3  # Library for web scraping purposes to pull the data out of HTML and XML files
+scrapy==2.5.0  # An open-source and collaborative web crawling framework for Python
+
+# Data Storage
+sqlalchemy==1.4.15  # SQL toolkit and Object-Relational Mapping system for Python
+
+# Testing
+pytest==6.2.4  # Framework for simple unit tests as well as complex functional testing
+
+# ... (any other dependencies)
+
