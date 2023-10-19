@@ -1,5 +1,7 @@
+import json
 import autogen as ag
 from icecream import ic
+from config import config_list_gpt4
 
 class GeneralManagerAgent:
     def __init__(self):

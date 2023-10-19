@@ -1,11 +1,30 @@
 # Import necessary libraries and modules
+import json
 import streamlit as st
 import sys
-sys.path.append("..")  # Append the parent directory to sys.path
+sys.path.append("..",)  # Append the parent directory to sys.path
+import os
 
-from agents.agent_classes import GeneralManagerAgent, Agent, DigitalTwinAgent, PromptTreeNode
-from agents.agent_classes import PromptTreeNode
-from config import Config
+if not os.path.exists('path/to/file'):
+    logging.error('File not found: path/to/file')
+    sys.exit(1)  # Exit the script
+from agents.autogen_agents import GeneralManagerAgent, Agent, DigitalTwinAgent, PromptTreeNode
+from config import config_list_gpt4, llm_config
+from icecream import ic
+import logging
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    filename=os.path.join(log_dir, 'app.log'),
+    filemode='w'
+)
+# Now you can use logging.info(), logging.warning(), logging.error(), etc.
+
+
+# Usage: ic(variable)
+
+
 
 
 
@@ -123,6 +142,12 @@ def eco_buddies_page():
 def settings_page():
     st.write("Configure your settings.")
     # ... code for displaying and updating settings
+def handle_error(error):
+    with open(os.path.join(error_dir, 'error.log'), 'a') as error_file:
+        error_file.write(f'{str(error)}\n')
+def save_debug_data(data):
+    with open(os.path.join(debug_dir, 'debug.log'), 'a') as debug_file:
+        debug_file.write(f'{str(data)}\n')
 
 # Run the app
 if __name__ == "__main__":
