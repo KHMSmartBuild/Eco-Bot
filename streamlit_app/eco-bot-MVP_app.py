@@ -1,16 +1,41 @@
 # Import necessary libraries and modules
 import streamlit as st
 from agents import GeneralManagerAgent, Agent, DigitalTwinAgent
-from gbts import GBTS, PromptTreeNode
+from agents.agent_classes import PromptTreeNode
 from config import Config
-
+import os   # Import necessary libraries and modules
 def home_page():
     st.write("Welcome to Eco-Bot! Let's make eco-friendly choices together.")
     # ... other home page content
 
 def gbts_interaction_page():
     st.write("Explore the Gaia-Bohm Thought Style (GBTS) interaction here.")
-    # ... code for GBTS interaction, e.g., displaying and navigating the prompt tree
+def get_prompt_tree():
+    # Code to retrieve the prompt tree
+    pass
+
+def display_prompt_tree(prompt_tree):
+    # Code for displaying the prompt tree
+    pass
+
+def navigate_prompt_tree(prompt_tree, user_input):
+    # Code for navigating the prompt tree based on user input
+    pass
+
+def gbts_interaction_page():
+    st.write("Explore the Gaia-Bohm Thought Style (GBTS) interaction here.")
+
+    prompt_tree = get_prompt_tree()  # Obtain the GBTS prompt tree
+
+    display_prompt_tree(prompt_tree)
+
+    user_input = st.text_input("Enter your choice:")  # Get user input
+    
+    navigate_prompt_tree(prompt_tree, user_input)
+
+    # ... additional code for GBTS interaction
+
+# Rest of the code
 
 def eco_buddies_page():
     st.write("Meet your Eco-Buddies!")
