@@ -6,7 +6,7 @@ pandas==1.2.3  # Data analysis and manipulation tool
 numpy==1.20.2  # Fundamental package for array computing with Python
 
 # Code Generation
-pyautogen==<version>  # (Replace <version> with the actual version) Tool for automatic code generation
+pyautogen-0.1.11  # (Replace <version> with the actual version) Tool for automatic code generation
 
 # Debugging
 icecream==2.1.0  # Inspect variables, expressions, and program execution with simple ic() calls

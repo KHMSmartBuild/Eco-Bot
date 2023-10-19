@@ -127,6 +127,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+eco-bot_env/
 
 # Spyder project settings
 .spyderproject

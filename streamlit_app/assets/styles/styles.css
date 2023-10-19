@@ -1,0 +1,73 @@
+/* General Styles */
+body {
+    background-color: #F5F7F9;  /* A light grey-blue background */
+    font-family: 'Arial', sans-serif;
+    color: #333;  /* Dark grey for general text */
+}
+
+/* Main Header */
+header {
+    background-color: #4CAF50;  /* Vibrant green for the header */
+    padding: 10px 0;
+    text-align: center;
+    color: white;
+    font-size: 1.5em;  /* Increase font size for header text */
+}
+
+/* Eco-Bot Styles */
+.eco-bot {
+    max-width: 100%;
+    margin: 20px auto;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+}
+
+.eco-bot:hover {
+    transform: scale(1.05);
+}
+
+/* Main Content Area */
+.main-content {
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: 20px;
+}
+
+/* Buttons & Interactions */
+.button {
+    background-color: #4CAF50;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    font-weight: bold;  /* Make button text bold */
+}
+
+.button:hover {
+    background-color: #45a049;
+}
+
+/* Seasonal Color Changes */
+/* You can use these classes to change the color theme based on the season */
+.spring-theme {
+    background-color: #A8E6CF;  /* Light green for spring */
+}
+
+.summer-theme {
+    background-color: #4CAF50;  /* Vibrant green for summer */
+}
+
+.autumn-theme {
+    background-color: #D9A679;  /* Earthy brown for autumn */
+}
+
+.winter-theme {
+    background-color: #DDE1E4;  /* Cool blue-grey for winter */
+}
+
+/* Additional Styles */
+/* ... */
