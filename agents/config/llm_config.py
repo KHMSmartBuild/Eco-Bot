@@ -1,4 +1,4 @@
-from config import config_list_gpt4
+import config_list_gpt4
 
 llm_config={
         "request_timeout": 600,
