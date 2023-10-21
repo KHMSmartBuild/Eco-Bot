@@ -1,29 +1,11 @@
-# Import necessary libraries and modules
 import json
 import streamlit as st
 import sys
-sys.path.append("..",)  # Append the parent directory to sys.path
 import os
-
-if not os.path.exists('path/to/file'):
-    logging.error('File not found: path/to/file')
-    sys.exit(1)  # Exit the script
-from agents.autogen_agents import GeneralManagerAgent, Agent, DigitalTwinAgent, PromptTreeNode
-from config import config_list_gpt4, llm_config
 from icecream import ic
-import logging
 
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s',
-    filename=os.path.join(log_dir, 'app.log'),
-    filemode='w'
-)
-# Now you can use logging.info(), logging.warning(), logging.error(), etc.
-
-
-# Usage: ic(variable)
-
+# Append the parent directory to sys.path
+sys.path.append(".")
 
 
 
@@ -37,22 +19,23 @@ st.set_page_config(
 )
 
 # Load the Eco-Bot Image
-@st.cache
+@st.cache_data
 def load_image(image_path):
     return open(image_path, "rb").read()
 
 # Main App
 def main():
     # Apply custom styles
-    with open("streamlit_app/assets/styles.css", "r") as f:
+    with open("assets/styles/styles.css", "r") as f:
         st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
-
+    html_content = load_html("assets/site_layout.html")
+    st.markdown(html_content, unsafe_allow_html=True)
     # App Header
     st.title("Eco-Bot")
     st.write("Welcome to the Eco-Bot app! Here, we integrate nature with technology.")
 
     # Display Eco-Bot Image
-    eco_bot_image = load_image("streamlit_app/assets/images/Eco_bot.png")
+    eco_bot_image = load_image("assets/images/eco-bot.png")
     st.image(eco_bot_image, caption="Eco-Bot", use_column_width=True)
 
     # Main Content Area
@@ -61,24 +44,77 @@ def main():
     Eco-Bot represents the harmonious blend of technology and nature. 
     It's our commitment to a sustainable future where technology complements nature.
     """)
+    # Quadrant Layout
+    col1, col2, col3, col4 = st.columns(4)
 
-    # User Interactions
-    st.subheader("Interact with Eco-Bot")
-    user_input = st.text_input("Ask Eco-Bot a question:")
-    if user_input:
-        # Placeholder for Eco-Bot's response logic
-        st.write("Eco-Bot says: ...")  # Replace with actual response
+    # Agent 1 in Quadrant 1
+    with col1:
+        st.image("path_to_agent1_avatar.jpg")
+        st.text_area("Agent 1 Response:", value="", key="agent1_response")
 
-    # Multi-Agent Chat Interface
-    st.sidebar.header("Multi-Agent Chat Interface")
+    # Agent 2 in Quadrant 2
+    with col2:
+        st.image("path_to_agent2_avatar.jpg")
+        st.text_area("Agent 2 Response:", value="", key="agent2_response")
 
-    # Agent 1
-    st.sidebar.text("Agent 1")
-    agent1_response = st.sidebar.text_area("Response:", value="")
+    # Agent 3 in Quadrant 3
+    with col3:
+        st.image("path_to_agent3_avatar.jpg")
+        st.text_area("Agent 3 Response:", value="", key="agent3_response")
 
-    # Agent 2
-    st.text("Agent 2 Reply")
-    agent2_response = st.text_area("Response:", value="")
+    # Agent 4 in Quadrant 4
+    with col4:
+        st.image("path_to_agent4_avatar.jpg")
+        st.text_area("Agent 4 Response:", value="", key="agent4_response")
+
+    # Center Area for Visual Representation
+    # (Placeholder - Replace with actual visual representation logic)
+    st.text("Live Visual Representation of Conversation")
+
+    # Combined Text Area for User & Eco-Bot
+    st.text("Conversation History")
+    st.text_area("Chat with Eco-Bot:", value="", key="main_conversation")
+
+    # Placeholder for chat history
+    chat_history = ""
+
+    # Check if there's a previous chat history saved in the session state
+    if 'chat_history' in st.session_state:
+        chat_history = st.session_state.chat_history
+
+    # Display the chat history
+    st.text_area("Chat History", value=chat_history, height=300, key="chat_display", disabled=True)
+
+    # Input field for user messages
+    user_message = st.text_input("Type your message:")
+
+    # Send button
+    if st.button("Send"):
+        # Append user message to chat history
+        chat_history += f"User: {user_message}\n"
+        
+        # Compute and append responses from Eco-Bot and EcoBuddies
+        # (This is just a placeholder, replace with actual logic)
+        chat_history += "Eco-Bot: Hello!\n"
+        
+        # Update session state with new chat history
+        st.session_state.chat_history = chat_history
+
+        # Clear the user input field
+        st.text_input("Type your message:", value="", key="user_input")
+
+        # User Interactions
+        st.subheader("Interact with Eco-Bot")
+        user_input = st.text_input("Ask Eco-Bot a question:")
+        if user_input:
+            # Placeholder for Eco-Bot's response logic
+            st.write("Eco-Bot says: ...")  # Replace with actual response
+    st.sidebar.header("Menu")
+    st.sidebar.text("Previous Conversations")
+    # Display previous conversations, perhaps in a selectbox or list
+    st.sidebar.text("Settings")
+    # Settings options/buttons
+
 
     # Imagery
     st.text("Imagery")
@@ -88,14 +124,7 @@ def main():
     st.text("Key Points - Meeting Minutes")
     meeting_minutes = st.text_area("Topics:", value="")
 
-    # Agent 3
-    st.sidebar.text("Agent 3")
-    agent3_response = st.sidebar.text_area("Response:", value="")
-
-    # Agent 4
-    st.text("Agent 4")
-    agent4_response = st.text_area("Response:", value="")
-
+    # Key Points - Issues
     # Issues
     st.text("Issues")
     issues_covered = st.text_area("Issues Covered:", value="")
@@ -104,7 +133,7 @@ def main():
 
     # User chat or Prompt
     st.text("User chat or Prompt")
-    user_chat = st.text_area("Type your message:", value="")
+    user_chat = st.text_area("Type your message:", value="", key="user_chat")
 
     # Optional: Add a button to send/save the chat
     send_button = st.button("Send")
@@ -123,7 +152,9 @@ def main():
         eco_buddies_page()
     elif page == "Settings":
         settings_page()
-
+def load_html(filename):
+    with open(filename, "r") as f:
+        return f.read()
 # Home Page
 def home_page():
     st.write("Welcome to Eco-Bot! Let's make eco-friendly choices together.")
@@ -142,12 +173,7 @@ def eco_buddies_page():
 def settings_page():
     st.write("Configure your settings.")
     # ... code for displaying and updating settings
-def handle_error(error):
-    with open(os.path.join(error_dir, 'error.log'), 'a') as error_file:
-        error_file.write(f'{str(error)}\n')
-def save_debug_data(data):
-    with open(os.path.join(debug_dir, 'debug.log'), 'a') as debug_file:
-        debug_file.write(f'{str(data)}\n')
+
 
 # Run the app
 if __name__ == "__main__":

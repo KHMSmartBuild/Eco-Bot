@@ -1,0 +1,8 @@
+
+[
+    {
+        "model": "gpt-4",
+        "api_key": "<placeholder_for_openai_api_key>"
+    }
+    
+]
