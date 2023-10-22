@@ -1,27 +1,22 @@
-#Script name: eco-bot-MVP_app.py # streamlit_app/eco-bot-MVP_app.py
-#Author: Kyle
-#Company: KHM Smart Build
-#Description: This is the streamlit app for the Eco-Bot MVP.
-"""This is the streamlit app for the Eco-Bot MVP.
-the apps main funtions are as listed;
-chatbot:Eco-Bot
-settings:Configure your settings.
-eco_buddies:Meet your Eco-Buddies!
-#gbts_interaction:Choose your eco-buddies to help complete your eco-missions.
-#gbts_interaction:Explore the Gaia-Bohm Thought Style (GBTS) interaction here.
-main page has chatbot, settings, eco_buddies, gbts_interaction,"""
-#Date: 2023-05-10
+
+import sys
+# Append the parent directory to sys.path
+sys.path.append('C:/Users/User/OneDrive/Desktop/Buisness/KHM Smart Build/Coding/Projects/OCFS_projects/Eco-Bot/')
 
 import streamlit as st
-import sys
 import os
 from icecream import ic
+import json
+from gbts.gbts import GBTS
 from agents.autogen_agents import GeneralManagerAgent, Agent, DigitalTwinAgent
-from eco_buddies import eco_bot, eco_buddies
-# Append the parent directory to sys.path
-sys.path.append(".")
+from eco_buddies.Eco_Bot import EcoBot
+from eco_buddies.Eco_Buddies import EcoBuddy_Vision, EcoBuddy_Audio
+# Load GBTS prompts structure
+with open('C:/Users/User/OneDrive/Desktop/Buisness/KHM Smart Build/Coding/Projects/OCFS_projects/Eco-Bot/gbts/GBTS.json', 'r') as f:  # replace with the path to your GBTS prompts JSON file
+    GBTS_PROMPTS = json.load(f)
 
-
+# Initialize GBTS
+gbts_instance = GBTS()
 
 
 
@@ -173,11 +168,34 @@ def load_html(filename):
 # Home Page
 def home_page():
     st.write("Welcome to Eco-Bot! Let's make eco-friendly choices together.")
-
+    with open("assets/site_layout.html", "r") as f:
+        html_content = f.read()
+        st.markdown(html_content, unsafe_allow_html=True)
 # GBTS Interaction Page
 def gbts_interaction_page():
     st.write("Explore the Gaia-Bohm Thought Style (GBTS) interaction here.")
-    # ... additional code for GBTS interaction
+    
+    # Example of guiding user through the first prompt
+    if 'current_stage' not in st.session_state:
+        st.session_state.current_stage = "Seed of Inquiry"
+    
+    st.write(GBTS_PROMPTS[st.session_state.current_stage]['prompt'])
+    user_response = st.text_area("Your Response:", "")
+    
+    if st.button("Next"):
+        # Save the user's response in the GBTS tree
+        if gbts_instance.root_node is None:
+            gbts_instance.initiate_prompt_tree(user_response)
+        else:
+            # Logic to add the response as a new node in the GBTS tree
+            pass  # This will be developed further based on how you want the conversation to progress
+        
+        # Move to the next stage (this is a simple example, you'd need more complex logic for branching paths)
+        if st.session_state.current_stage == "Seed of Inquiry":
+            st.session_state.current_stage = "Branches of Understanding"
+
+    # Display the current state of the GBTS tree (as a JSON string for now)
+    st.json(gbts_instance.to_json())
 
 # Eco-Buddies Page
 def eco_buddies_page():
@@ -214,3 +232,19 @@ def main():
 # Run the app
 if __name__ == "__main__":
     main()
+
+
+    #Script name: eco-bot-MVP_app.py # streamlit_app/eco-bot-MVP_app.py
+    #Author: Kyle
+    #Company: KHM Smart Build
+    #Description: This is the streamlit app for the Eco-Bot MVP.
+    """This is the streamlit app for the Eco-Bot MVP.
+    the apps main funtions are as listed;
+    chatbot:Eco-Bot
+    settings:Configure your settings.
+    eco_buddies:Meet your Eco-Buddies!
+    #gbts_interaction:Choose your eco-buddies to help complete your eco-missions.
+    #gbts_interaction:Explore the Gaia-Bohm Thought Style (GBTS) interaction here.
+    main page has chatbot, settings, eco_buddies, gbts_interaction,"""
+    #Date: 2023-05-10
+    #Version: 1.0

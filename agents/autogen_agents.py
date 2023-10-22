@@ -75,3 +75,32 @@ class DigitalTwinAgent:
         ic(message)
 
     # ... [Rest of the DigitalTwinAgent class methods]
+
+
+class Agent:
+    """
+    Base class for all agents managed by the GeneralManagerAgent (GMA).
+    """
+    
+    def __init__(self, name, role, llm_config=None):
+        self.name = name  # Name of the agent
+        self.role = role  # Role or function of the agent
+        self.llm_config = llm_config  # Configuration for the LLM GPT model
+        self.status = "idle"  # Current status of the agent (e.g., "idle", "working", "error")
+
+    def perform_task(self, task):
+        """
+        Perform a specific task. This method can be overridden by subclasses to provide 
+        specific functionalities for different types of agents.
+        """
+        # Basic implementation: just log the task using ic
+        ic(f"{self.name} is performing task: {task}")
+
+    def update_status(self, new_status):
+        """
+        Update the current status of the agent.
+        """
+        self.status = new_status
+        ic(f"{self.name}'s status updated to: {self.status}")
+
+    # ... [Any other methods or functionalities you want to add for the Agent class]

@@ -4,56 +4,45 @@ import autogen as ag
 from agents.autogen_agents import GeneralManagerAgent, Agent, DigitalTwinAgent
 from icecream import ic
 from dotenv import load_dotenv
-
-class EcoBuddies_Vision:
+class BaseEcoBuddy:
     def __init__(self):
-        """
-        Initializes the class instance by loading API keys and configurations, and initializing various agents and properties.
-
-        Parameters:
-            None
-
-        Returns:
-            None
-        """
-        # Load API keys and configurations
-        self.config_list = self.load_configurations()
-
-        # Initialize agents
-        self.vision_agent = ag.VisionAgent(Agent)
-        self.general_manager = GeneralManagerAgent()
-        self.digital_twin = DigitalTwinAgent(self.general_manager)
-        self.personality = self.load_personality()
-
-    @staticmethod
-    def load_personality():
-        """Load the personality of the bot."""
-        # TODO: Implement the method to load the bot's personality
+        # Common properties and methods
         pass
 
-    @staticmethod
-    def load_configurations():
-        """Load API keys and configurations from .env and llm_config.json."""
-        # Load API keys from .env file
-        load_dotenv("config/.env")
-        openai_api_key = os.getenv("OPENAI_API_KEY")
-        azure_openai_api_key = os.getenv("AZURE_OPENAI_API_KEY")
+    def communicate(self, message):
+        # Common method to communicate with the user
+        pass
 
-        # Load configurations from llm_config.json
-        with open("config/llm_config.json", "r") as file:
-            config_list = json.load(file)
+class EcoBuddy_Vision(BaseEcoBuddy):
+    def __init__(self):
+        super().__init__()
+        # Vision-specific properties and methods
+        self.vision_agent = ag.VisionAgent(Agent)
+        # ... other vision-related initializations
 
-        # Replace placeholders in config_list with actual API keys
-        for config in config_list:
-            if "<placeholder_for_openai_api_key>" in config.get("api_key", ""):
-                config["api_key"] = openai_api_key
-            elif "<placeholder_for_azure_openai_api_key>" in config.get("api_key", ""):
-                config["api_key"] = azure_openai_api_key
+    def analyze_image(self, image_path):
+        # Method to analyze an image
+        pass
 
-        # Debugging: Print the configuration list
-        ic(config_list)
+class EcoBuddy_Audio(BaseEcoBuddy):
+    def __init__(self):
+        super().__init__()
+        # Audio-specific properties and methods
 
-        return config_list
+    def analyze_audio(self, audio_path):
+        # Method to analyze an audio clip
+        pass
 
-# TODO: Implement other functionalities or methods related to vision processing
+# ... other specialized eco-buddies
 
+def create_eco_buddy(buddy_type):
+    if buddy_type == "vision":
+        return EcoBuddy_Vision()
+    elif buddy_type == "audio":
+        return EcoBuddy_Audio()
+    # ... other conditions for other eco-buddies
+
+
+# example usage
+# buddy = create_eco_buddy("vision")
+# buddy.analyze_image("path_to_image.jpg")
