@@ -7,6 +7,15 @@ from dotenv import load_dotenv
 
 class EcoBuddies_Vision:
     def __init__(self):
+        """
+        Initializes the class instance by loading API keys and configurations, and initializing various agents and properties.
+
+        Parameters:
+            None
+
+        Returns:
+            None
+        """
         # Load API keys and configurations
         self.config_list = self.load_configurations()
 

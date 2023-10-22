@@ -16,9 +16,11 @@ import streamlit as st
 import sys
 import os
 from icecream import ic
-from eco-buddies.Eco-Bot import EcoBot
+from agents.autogen_agents import GeneralManagerAgent, Agent, DigitalTwinAgent
+from eco_buddies import eco_bot, eco_buddies
 # Append the parent directory to sys.path
 sys.path.append(".")
+
 
 
 
@@ -49,7 +51,7 @@ def main():
 
     # Display Eco-Bot Image
     eco_bot_image = load_image("assets/images/eco-bot.png")
-    st.image(eco_bot_image, caption="Eco-Bot", use_column_width=True)
+    st.image(eco_bot_image, caption="Eco-Bot", size=(50, 50))
 
     # Main Content Area
     st.subheader("About Eco-Bot")
@@ -179,15 +181,36 @@ def gbts_interaction_page():
 
 # Eco-Buddies Page
 def eco_buddies_page():
-    st.write("Meet your Eco-Buddies!")
-    # ... code for displaying and interacting with Eco-Buddies
-
+        """
+        Display the Eco-Buddies page and provide options to add them to the chat window.
+    
+        This function is responsible for displaying the Eco-Buddies page. It uses the `st.write` function 
+        to display the heading "Meet your Eco-Buddies!". It then reads the content of the file 
+        "eco_buddies_options.txt" and writes it to the page using the `st.write` function.
+    
+        After displaying the Eco-Buddies page, the function provides options to add the Eco-Buddies to the chat window.
+    
+        Parameters:
+            None
+    
+        Returns:
+            None
+        """
+        # ... code for displaying and updating Eco-Buddies
+        if st.button("Add Eco-Buddies"):
+            st.__path__.append("eco_buddies")
+            with open("eco_buddies_options.txt", "r") as f:
+                st.write(f.read())
 # Settings Page
 def settings_page():
     st.write("Configure your settings.")
     # ... code for displaying and updating settings
 
-
+# Main function
+def main():
+    # ... code for displaying and updating Eco-Bot
+    with st.spinner("Loading Eco-Bot..."):
+        eco_bot()   
 # Run the app
 if __name__ == "__main__":
     main()
