@@ -11,46 +11,38 @@ tensorflow = "^2.6.0"
 numpy = "^1.21.0"
 
 [autogen]
-# Configuration for the AutoGen tool integration
-api_key = "YOUR_ENV_VARIABLE"  # Replace with your environment variable for AutoGen API key
+api_key = os.getenv("AUTOGEN_API_KEY")
 model_path = "models/autogen_model"
 training_data_path = "data/training_data.csv"
 
 [bot]
-# OpenAI API credentials
-openai_api_key = "YOUR_ENV_VARIABLE_FOR_OPENAI_KEY"
-
-# Path to Eco-Bot personality script
+openai_api_key = os.getenv("OPENAI_API_KEY")
 personality_script_path = "scripts/eco_bot_personality.txt"
-
-# Path to system messages
 system_message_path = "messages/system_messages.json"
 
-# (Future) Computer Vision Configuration
 [bot.computer_vision]
-# Placeholder for future computer vision configurations
 model_path = "models/computer_vision_model"
 
 [database]
-# Configuration for database connections
 db_name = "eco_bot_db"
 db_user = "admin"
-db_password = "YOUR_ENV_VARIABLE"  # Replace with your environment variable for database password
+db_password = os.getenv("DB_PASSWORD")
 db_host = "localhost"
 db_port = "5432"
 
 [logging]
-# Configuration for logging
 log_level = "INFO"
 log_format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 log_file = "logs/eco_bot.log"
 
 [webserver]
-# Configuration for the web server
 host = "0.0.0.0"
 port = "8000"
 
 [security]
-# Security configurations for the Eco-Bot
-encryption_key = "YOUR_ENV_VARIABLE"  # Replace with your environment variable for encryption key
-token_expiry = 3600  # in seconds
+encryption_key = os.getenv("ENCRYPTION_KEY")
+token_expiry = 3600
+
+# Validation checks (pseudo-code, actual implementation will be in Python)
+[validation]
+required_keys = ["autogen.api_key", "bot.openai_api_key", "database.db_password", "security.encryption_key"]

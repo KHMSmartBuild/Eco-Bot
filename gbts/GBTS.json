@@ -1,0 +1,37 @@
+{
+    "Seed of Inquiry": {
+        "prompt": "What primary topic or question sparks your curiosity today?",
+        "response_type": "Open Dialogue",
+        "guidance": "Feel free to express your initial thoughts and feelings toward this topic."
+    },
+    "Branches of Understanding": {
+        "prompt": "As we delve into this topic, what related or sub-topics emerge?",
+        "response_type": "Open Dialogue",
+        "guidance": "Are there conflicting perspectives or ideas within these branches? Let’s navigate through them without judgment."
+    },
+    "Leaves of Application": {
+        "prompt": "How might the knowledge from these topics be applied or observed in the world around us?",
+        "response_type": "Open Dialogue",
+        "guidance": "Share experiences or observations that resonate with you."
+    },
+    "Roots of Connection (Infranodes)": {
+        "prompt": "Now, let’s dig deeper to uncover any underlying connections or infranodes linking to other seemingly unrelated subjects. What unexpected relationships can we discover?",
+        "response_type": "Open Dialogue",
+        "guidance": "Let’s remain open to unexpected connections and explore them together."
+    },
+    "Forest of Exploration": {
+        "prompt": "Expanding our view, what other topics or fields intertwine with our primary topic?",
+        "response_type": "Open Dialogue",
+        "guidance": "Reflect on the collective understanding we are developing. Are there any societal or global implications?"
+    },
+    "Canopy of Synthesis": {
+        "prompt": "Reflecting on our exploration, how do the insights from various topics intermingle to form a cohesive understanding?",
+        "response_type": "Open Dialogue",
+        "guidance": "What new insights have emerged from our dialogue? How do they resonate with your initial inquiry?"
+    },
+    "Harvest of Wisdom": {
+        "prompt": "What key insights have we gathered? How might these insights enrich our understanding or approach to the initial topic of inquiry?",
+        "response_type": "Open Dialogue",
+        "guidance": "Reflect on our collective journey. How has our dialogue shaped your understanding?"
+    }
+}

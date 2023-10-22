@@ -1,0 +1,26 @@
+# GeneralManagerAgent Configuration File
+[project]
+name = "GeneralManagerAgent"
+description = "Central agent responsible for managing the app and background agents."
+version = "0.1.0"
+
+[dependencies]
+python = "^3.8"
+autogen = "^1.0.0"
+
+[agent]
+api_key = os.getenv("GMA_API_KEY")
+model_path = "models/gma_model"
+training_data_path = "data/gma_training_data.csv"
+
+[logging]
+log_level = "INFO"
+log_format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+log_file = "logs/gma.log"
+
+[security]
+encryption_key = os.getenv("GMA_ENCRYPTION_KEY")
+token_expiry = 3600
+
+[validation]
+required_keys = ["agent.api_key", "security.encryption_key"]
