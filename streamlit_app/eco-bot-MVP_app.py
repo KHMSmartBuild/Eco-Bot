@@ -1,9 +1,22 @@
-import json
+#Script name: eco-bot-MVP_app.py # streamlit_app/eco-bot-MVP_app.py
+#Author: Kyle
+#Company: KHM Smart Build
+#Description: This is the streamlit app for the Eco-Bot MVP.
+"""This is the streamlit app for the Eco-Bot MVP.
+the apps main funtions are as listed;
+chatbot:Eco-Bot
+settings:Configure your settings.
+eco_buddies:Meet your Eco-Buddies!
+#gbts_interaction:Choose your eco-buddies to help complete your eco-missions.
+#gbts_interaction:Explore the Gaia-Bohm Thought Style (GBTS) interaction here.
+main page has chatbot, settings, eco_buddies, gbts_interaction,"""
+#Date: 2023-05-10
+
 import streamlit as st
 import sys
 import os
 from icecream import ic
-
+from eco-buddies.Eco-Bot import EcoBot
 # Append the parent directory to sys.path
 sys.path.append(".")
 
