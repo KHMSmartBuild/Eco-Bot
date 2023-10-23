@@ -6,7 +6,7 @@ from icecream import ic
 from agents.autogen_agents import GeneralManagerAgent, Agent, DigitalTwinAgent
 
 # Load personality script
-with open("eco-buddies/eco-bot_personality.js", "r") as file:
+with open("C:/Users/User/OneDrive/Desktop/Buisness/KHM Smart Build/Coding/Projects/OCFS_projects/Eco-Bot/eco_buddies/eco_bot_personality.js", "r") as file:
     personality_script = file.read()
 
 class EcoBot:
@@ -16,7 +16,7 @@ class EcoBot:
 
     @staticmethod
     def load_personality():
-        with open("eco-buddies/eco-bot_personality.js", "r") as file:
+        with open("C:/Users/User/OneDrive/Desktop/Buisness/KHM Smart Build/Coding/Projects/OCFS_projects/Eco-Bot/eco_buddies/Eco_Bot.py", "r") as file:
             return file.read()
 
     def handle_input(self, user_input):

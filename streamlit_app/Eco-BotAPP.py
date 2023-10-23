@@ -4,12 +4,16 @@
 # Description: Hybrid version of the Eco-Bot MVP Streamlit app.
 # Date: 2023-05-10
 
+import sys
+
+# Append the parent directory to sys.path
+sys.path.append('C:/Users/User/OneDrive/Desktop/Buisness/KHM Smart Build/Coding/Projects/OCFS_projects/Eco-Bot/')
+
 import streamlit as st
 from icecream import ic
-import sys
-sys.path.append('/path/to/directory/containing/eco_buddies')
+from gbts.gbts import GBTS
+from agents.autogen_agents import GeneralManagerAgent
 from eco_buddies.Eco_Bot import EcoBot_Chat
-
 
 # Streamlit App Configuration
 st.set_page_config(
@@ -19,24 +23,18 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
+# Initialize the EcoBot and GeneralManagerAgent
+ecobot_chat = EcoBot_Chat()
+gma = GeneralManagerAgent(ecobot_chat)
+
 # Utility Functions
-@st.cache_data
+@st.cache
 def load_image(image_path):
-    return open(image_path, "rb").read()
-# ... (rest of the imports and utility functions)
-
-ecobot_chat = EcoBot_Chat()  # Create an instance of the EcoBot_Chat class
-
-def home_page():
-    st.write("Welcome to Eco-Bot! Let's make eco-friendly choices together.")
-    
-    # Chatbot Interface
-    user_input = st.text_input("Ask Eco-Bot a question:")
-    if user_input:
-        response = ecobot_chat.handle_input(user_input)
-        st.write(f"Eco-Bot: {response}")
-
-# ... (rest of the code)
+    try:
+        return open(image_path, "rb").read()
+    except FileNotFoundError:
+        st.error(f"Error: Image not found at {image_path}")
+        return None
 
 # Main App Function
 def main():
@@ -46,7 +44,8 @@ def main():
     
     # Display Eco-Bot Image
     eco_bot_image = load_image("assets/images/eco-bot.png")
-    st.image(eco_bot_image, caption="Eco-Bot", use_column_width=False, width=200)
+    if eco_bot_image:
+        st.image(eco_bot_image, caption="Eco-Bot", use_column_width=False, width=200)
 
     # Sidebar Navigation
     st.sidebar.header("Menu")
@@ -66,6 +65,14 @@ def main():
 # Home Page
 def home_page():
     st.write("Welcome to Eco-Bot! Let's make eco-friendly choices together.")
+    
+    # Chatbot Interface
+    user_input = st.text_input("Ask Eco-Bot a question:")
+    
+    if user_input:
+        # Using GMA to enhance the response
+        response = gma.assist_eco_bot(user_input)
+        st.write(f"Eco-Bot: {response}")
 
 # GBTS Interaction Page
 def gbts_interaction_page():
