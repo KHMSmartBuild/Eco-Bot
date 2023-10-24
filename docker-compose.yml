@@ -3,7 +3,7 @@ version: '3.8'
 services:
   eco-bot:
     image: eco-bot:latest
-    build:
+    build: 
       context: .
       dockerfile: Dockerfile.ecobot
     environment:
@@ -30,7 +30,7 @@ services:
     environment:
       - GMA_ENV_VAR=value
     volumes:
-      - ./logs:/app/logs
+      - ./logs:/log
     networks:
       - internal
     restart: unless-stopped
@@ -44,7 +44,7 @@ services:
       context: .
       dockerfile: Dockerfile.dt
     volumes:
-      - ./logs:/app/logs
+      - ./logs:/log
     networks:
       - internal
     restart: unless-stopped

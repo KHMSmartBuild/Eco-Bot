@@ -1,20 +1,26 @@
 import json
 import os
+import sys
+
+# Append the parent directory to sys.path
+sys.path.append('C:/Users/User/OneDrive/Desktop/Buisness/KHM Smart Build/Coding/Projects/OCFS_projects/Eco-Bot/')
+
 from agents.config import config_list_gpt4
 from eco_buddies import Eco_Bot
 from icecream import ic
-from autogen import AssistantAgent, UserProxyAgent, config_list_from_json
+from autogen.agentchat import AssistantAgent, UserProxyAgent, ConversableAgent,groupchat
 
 # Load LLM inference endpoints from an env variable or a file
 # See https://microsoft.github.io/autogen/docs/FAQ#set-your-api-endpoints
 # and OAI_CONFIG_LIST_sample.json
-config_list = config_list_from_json(env_or_file="config_list_gpt4")
+config_list = json.load(env_or_file="agents\config\llm_config.json")
 assistant = AssistantAgent("assistant", llm_config={"config_list": config_list})
 user_proxy = UserProxyAgent("user_proxy", code_execution_config={"work_dir": "coding"})
 user_proxy.initiate_chat(assistant, message=("..."))
 # This initiates an automated chat between the two agents to solve the task
 ic = ic.configureOutput(prefix="")
-Eco_Bot = Eco_Bot()
+Eco_Bot_instance = ConversableAgent(Eco_Bot,assistant, user_proxy)
+
 class GeneralManagerAgent:
     """
     A manager class that oversees the conversation between the user and Eco-bot.

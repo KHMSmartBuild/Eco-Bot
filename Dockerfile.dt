@@ -20,4 +20,4 @@ COPY dt/ .
 
 # Define the command to run the DT
 # Replace `dt_script.py` with the actual entry point of your DT
-CMD ["python", "dt_script.py"]
+CMD ["python", "agents\digital_twin.py"]

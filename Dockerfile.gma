@@ -20,4 +20,4 @@ COPY gma/ .
 
 # Define the command to run the GMA
 # Replace `gma_script.py` with the actual entry point of your GMA
-CMD ["python", "gma_script.py"]
+CMD ["python", "agents/autogen_agents.py"]

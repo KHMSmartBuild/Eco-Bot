@@ -17,4 +17,4 @@ EXPOSE 8501
 ENV NAME EcoBot
 
 # Run Streamlit app when the container launches
-CMD ["streamlit", "run", "streamlit_app/Eco-BotAPP.py"]
+CMD ["streamlit_app", "run", "streamlit_app/Eco-BotAPP.py"]
