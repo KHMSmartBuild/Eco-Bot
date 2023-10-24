@@ -1,25 +1,22 @@
-import json
+
 import os
 import sys
+from icecream import ic
+from autogen.agentchat import AssistantAgent, UserProxyAgent, ConversableAgent
+from agents.config.config_loader import load_configurations
 
 # Append the parent directory to sys.path
 sys.path.append('C:/Users/User/OneDrive/Desktop/Buisness/KHM Smart Build/Coding/Projects/OCFS_projects/Eco-Bot/')
 
 from agents.config import config_list_gpt4
 from eco_buddies import Eco_Bot
-from icecream import ic
-from autogen.agentchat import AssistantAgent, UserProxyAgent, ConversableAgent,groupchat
 
 # Load LLM inference endpoints from an env variable or a file
-# See https://microsoft.github.io/autogen/docs/FAQ#set-your-api-endpoints
-# and OAI_CONFIG_LIST_sample.json
-config_list = json.load(env_or_file="agents\config\llm_config.json")
+config_list = load_configurations()
 assistant = AssistantAgent("assistant", llm_config={"config_list": config_list})
 user_proxy = UserProxyAgent("user_proxy", code_execution_config={"work_dir": "coding"})
 user_proxy.initiate_chat(assistant, message=("..."))
-# This initiates an automated chat between the two agents to solve the task
 ic = ic.configureOutput(prefix="")
-Eco_Bot_instance = ConversableAgent(Eco_Bot,assistant, user_proxy)
 
 class GeneralManagerAgent:
     """
@@ -33,7 +30,7 @@ class GeneralManagerAgent:
         self.digital_twins = []  # List to store digital twin agents
         
         # Configuration for the LLM GPT model
-        llm_config = {"config_list": config_list_gpt4, "seed": 42}
+        llm_config = {"config_list": config_list, "seed": 42}
 
         # Define specific agents with their roles and configurations
         self.initialize_agents(llm_config)
@@ -184,26 +181,25 @@ class AssistantAgent(Agent):
         # Basic implementation: just log the task using ic
         ic(f"{self.name} is performing task: {task}")
 
-class EcoBot:
+class EcoBot(Eco_Bot):
     """
     Represents the main bot that interacts with the user.
     """
 
-def __init__(self,):
-    self.name = "Eco-Bot"
-    self.role = "pm(Eco_Bot)"
-    self.llm_config = {"config_list": EcoBot+config_list_gpt4, "seed": 42}
-    self.common_manager = GeneralManagerAgent()
-    self.agents = [DigitalTwinAgent(), AssistantAgent()]
+    def __init__(self):
+        super().__init__()  # Call the parent class's initializer if necessary
+        self.name = "Eco-Bot"
+        self.role = "pm(Eco_Bot)"
+        self.llm_config = {"config_list": config_list_gpt4, "seed": 42}  # Removed Eco_Bot+ as it seemed incorrect
+        self.common_manager = GeneralManagerAgent()
+        self.agents = [DigitalTwinAgent(), AssistantAgent()]
 
+    def respond_to_user(self, user_input):
+        """
+        Generates a response to the user's input.
+        """
+        # Logic to generate a response
+        # For demonstration, we'll just return a placeholder response for now.
+        return "EcoBot's response to: " + user_input
 
-
-def respond_to_user(self, user_input):
-    """
-    Generates a response to the user's input.
-    """
-    # Logic to generate a response
-    # For demonstration, we'll just return a placeholder response for now.
-    return "EcoBot's response to: " + user_input
-
-# ... [Rest of the EcoBot class methods]
+    # ... [Rest of the EcoBot class methods]
