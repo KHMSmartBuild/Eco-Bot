@@ -1,17 +1,22 @@
 import os
 import json
+import clip
 import autogen as ag
 from agents.autogen_agents import GeneralManagerAgent, Agent, DigitalTwinAgent
 from icecream import ic
 from dotenv import load_dotenv
 class BaseEcoBuddy:
     def __init__(self):
-        # Common properties and methods
-        pass
+        # Initialize the icecream module for debugging
+        self.ic = ic.configureOutput(prefix="DTA Debug | ")
+
+    def log(self, message):
+        # Common method to log the provided message
+        self.ic(message)
 
     def communicate(self, message):
         # Common method to communicate with the user
-        pass
+        print(message)
 
 class EcoBuddy_Vision(BaseEcoBuddy):
     def __init__(self):
@@ -22,7 +27,7 @@ class EcoBuddy_Vision(BaseEcoBuddy):
 
     def analyze_image(self, image_path):
         # Method to analyze an image
-        pass
+        
 
 class EcoBuddy_Audio(BaseEcoBuddy):
     def __init__(self):

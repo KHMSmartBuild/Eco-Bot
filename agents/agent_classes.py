@@ -1,4 +1,4 @@
-class GeneralManagerAgent:
+class GeneralManagerAgentTools:
     def create_agent(self, task):
         """
         Create an agent and a digital twin agent for the given task.
@@ -16,34 +16,39 @@ class GeneralManagerAgent:
     def control_video_playback(user_input):
         """
         Control the video playback based on the user input.
-        
+
         Args:
             user_input (str): The user input.
         """
-        if video_platform == "YouTube":
-            # Code for YouTube video platform
-            # TODO: return #youtube_video 
-            pass
-        elif video_platform == "Vimeo":
-            # Code for Vimeo video platform
-            # TODO: return #vimeo_video
-            pass
-        else:
-            # Code for other video platforms
-            # TODO: return #other_video_platform
-            pass
+        video_platforms = {
+                "YouTube": {
+                    "play": #youtube_video.play,
+                    "pause": #youtube_video.pause,
+                    "skip": #youtube_video.skip,
+                    "rewind": #youtube_video.rewind,
+                    "search": #youtube_video.search
+                },
+                "Vimeo": {
+                    "play": #vimeo_video.play,
+                    "pause": #vimeo_video.pause,
+                    "skip": #vimeo_video.skip,
+                    "rewind": #vimeo_video.rewind,
+                    "search": #vimeo_video.search
+                },
+                "Other": {
+                    "play": #other_video_platform.play,
+                    "pause": #other_video_platform.pause,
+                    "skip": #other_video_platform.skip,
+                    "rewind": #other_video_platform.rewind,
+                    "search": #other_video_platform.search
+                }
+                }
 
-        actions = {
-            "play": video_platform.play_video,
-            "pause": video_platform.pause_video,
-            "skip": video_platform.skip_video,
-            "rewind": video_platform.rewind_video,
-            "search": video_platform.search_video
-        }
-
-        for action, method in actions.items():
-            if action in user_input:
-                method()
+        for platform, actions in video_platforms.items():
+            if platform == video_platform:
+                for action, method in actions.items():
+                    if action in user_input:
+                        method()
 
         return user_input
 
@@ -151,3 +156,45 @@ class PromptTreeNode:
         return self.prompt
     
 video_platform = "YouTube"
+
+# pictory_agent.py
+
+class PictoryAgent:
+    def __init__(self, api_key):
+        self.api_key = api_key
+
+    def generate_imagery(self, keywords):
+        """
+        Generate imagery based on the provided keywords using the Pictory API.
+        
+        Parameters:
+            keywords (list): List of keywords extracted from the conversation.
+
+        Returns:
+            str: URL or path to the generated imagery.
+        """
+        # Placeholder logic for Pictory API integration
+        # In practice, you'll need to make an API call to Pictory with the keywords
+        # and then retrieve the URL or path to the generated imagery.
+        
+        # For demonstration purposes:
+        imagery_url = "https://example.com/path/to/generated/imagery.jpg"
+        
+        return imagery_url
+
+    def out(self, user_input):
+        """
+        This function can be invoked from the chat to handle specific tasks related to the Pictory agent.
+        
+        Parameters:
+            user_input (str): Input or command from the user.
+
+        Returns:
+            str: Response or feedback to the user.
+        """
+        # Placeholder logic to handle user input
+        # Depending on the user_input, this function can perform specific tasks
+        # related to the Pictory agent and return an appropriate response.
+        
+        response = "Pictory agent received your input."
+        return response

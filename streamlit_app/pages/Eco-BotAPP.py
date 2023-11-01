@@ -11,9 +11,7 @@ sys.path.append('C:/Users/User/OneDrive/Desktop/Buisness/KHM Smart Build/Coding/
 
 import streamlit as st
 from icecream import ic
-from gbts.gbts import GBTS
-from agents.autogen_agents import GeneralManagerAgent
-from eco_buddies.Eco_Bot import EcoBot_Chat
+from eco_buddies.eco_bot_chat import EcoBot
 
 # Streamlit App Configuration
 st.set_page_config(
@@ -24,8 +22,8 @@ st.set_page_config(
 )
 
 # Initialize the EcoBot and GeneralManagerAgent
-ecobot_chat = EcoBot_Chat()
-gma = GeneralManagerAgent(ecobot_chat)
+ecobot_chat = EcoBot()
+
 
 # Utility Functions
 @st.cache
@@ -71,7 +69,7 @@ def home_page():
     
     if user_input:
         # Using GMA to enhance the response
-        response = gma.assist_eco_bot(user_input)
+        response = ecobot_chat.handle_input(user_input)
         st.write(f"Eco-Bot: {response}")
 
 # GBTS Interaction Page

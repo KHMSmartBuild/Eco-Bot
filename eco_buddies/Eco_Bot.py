@@ -5,16 +5,19 @@ from PIL import Image
 from icecream import ic
 from agents.autogen_agents import GeneralManagerAgent, Agent, DigitalTwinAgent
 from gbts.gbts import GBTS
+
 class EcoBot_Chat:
     """
     Represents the main bot that interacts with the user.
     Handles user input and generates responses using OpenAI's GPT-4 model.
     """
-    
+
     def __init__(self):
-        self.general_manager = GeneralManagerAgent(DigitalTwinAgent,Agent)
+        self.general_manager = GeneralManagerAgent(self)
         self.personality = self.load_personality()
-        self.system_message = GBTS+"Hello! I'm Eco-Bot, The sustainablity AI bot, here to help you with environmental information and tips also Eco-Missions. with my eco-buddies help our plan is to ."
+        self.system_message = "Hello! I'm Eco-Bot, The sustainability AI bot, here to help you with environmental information and tips also Eco-Missions. With my eco-buddies' help, our plan is to..."
+        self.gbts = GBTS()
+        self.gbts.initiate_prompt_tree("Seed of Inquiry")
 
     @staticmethod
     def load_personality():
@@ -29,7 +32,23 @@ class EcoBot_Chat:
     def handle_input(self, user_input):
         """Manage the conversation based on user input."""
         response = self.general_manager.manage_conversation(user_input)
-        return response
+
+        # If the user's input matches the expected response type for the current GBTS node
+        if self.gbts.root_node.response_type == "Open Dialogue":
+            # Save user's response in the current node
+            self.gbts.root_node.response = user_input
+
+            # Move to the next node in GBTS based on user's input (for simplicity, moving to the first child)
+            if self.gbts.root_node.children:
+                self.gbts.root_node = self.gbts.root_node.children[0]
+
+            # Provide the prompt for the next node
+            next_prompt = self.gbts.root_node.prompt
+        else:
+            # If user's response doesn't match the expected response type, provide guidance
+            next_prompt = self.gbts.root_node.guidance
+
+        return response, next_prompt
 
     def generate_response(self, user_input):
         """Generate a response using OpenAI's GPT-4 model."""
@@ -47,19 +66,3 @@ class EcoBot_Chat:
         except Exception as e:
             ic(f"Error generating response: {e}")
             return "Sorry, I couldn't generate a response at the moment."
-
-def process_image(image_path):
-    """Process an image and convert it to grayscale."""
-    try:
-        image = cv2.imread(image_path)
-        gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-        return gray_image
-    except Exception as e:
-        ic(f"Error processing image: {e}")
-        return None
-
-# If you want to use the EcoBot_Chat class:
-# ecobot_chat = EcoBot_Chat()
-# user_input = "How can I reduce my carbon footprint?"
-# response = ecobot_chat.generate_response(user_input)
-# print(response)

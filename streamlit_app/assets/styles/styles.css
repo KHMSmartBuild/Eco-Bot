@@ -52,7 +52,6 @@ header {
 }
 
 /* Seasonal Color Changes */
-/* You can use these classes to change the color theme based on the season */
 .spring-theme {
     background-color: #A8E6CF;  /* Light green for spring */
 }
@@ -70,7 +69,6 @@ header {
 }
 
 /* Additional Styles */
-/* ... */
 .avatar {
     width: 100px;
     height: 100px;

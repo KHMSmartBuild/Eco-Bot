@@ -9,14 +9,14 @@
 <body>
     <div class="container">
         <div class="menu">Menu</div>
-        <div class="agents">
-            <div class="agent" id="agent1">
-                <img src="assets/images/agent1-avatar.png" alt="Agent 1 Avatar">
+        <div class="eco-buddies">
+            <div class="eco-buddy" id="eco-buddy1">
+                <img src="assets/images/eco-buddy1-avatar.png" alt="Eco-Buddy 1 Avatar">
             </div>
-            <div class="agent" id="agent2">
-                <img src="assets/images/agent2-avatar.png" alt="Agent 2 Avatar">
+            <div class="eco-buddy" id="eco-buddy2">
+                <img src="assets/images/eco-buddy2-avatar.png" alt="Eco-Buddy 2 Avatar">
             </div>
-            <!-- More agents as needed -->
+            <!-- More eco-buddies as needed -->
         </div>
         <div class="chat-box">
             <div class="user-input">
@@ -37,10 +37,41 @@
                 <!-- Add more points as needed -->
             </ul>
         </div>
+        <div class="eco-bot-leaf-divider"></div>
         <!-- Other UI elements like 'Issues Covered', 'Issues Agreed', etc. can be added similarly -->
     </div>
     <div id="video-player"></div>
     <div id="eco-bot"></div>
     <script src="your-script.min.js"></script>
+
+    <style>
+        .eco-bot-logo {
+            /* Add your logo styles */
+        }
+
+        .leaf-icon {
+            /* Add your leaf icon styles */
+        }
+
+        body {
+            background: url('eco-bot-full.png') no-repeat center center fixed;
+            background-size: cover;
+        }
+
+        .eco-bot-leaf-divider {
+            background: url('leaf-divider.png') no-repeat;
+            height: 20px;
+            /* Adjust based on the image's natural size */
+            width: 100%;
+        }
+
+        .eco-bot-leaf-border {
+            border-image: url('leaf-border.png') 2020 round;
+            /* Adjust the border width */
+            padding: 20px;
+            /* Inner spacing */
+            margin: 20px 0;
+        }
+    </style>
 </body>
 </html>

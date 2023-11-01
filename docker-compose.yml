@@ -30,7 +30,7 @@ services:
     environment:
       - GMA_ENV_VAR=value
     volumes:
-      - ./logs:/log
+      - ./logs:./agents/log/gma.log
     networks:
       - internal
     restart: unless-stopped
@@ -44,7 +44,7 @@ services:
       context: .
       dockerfile: Dockerfile.dt
     volumes:
-      - ./logs:/log
+      - ./logs:/agents/log/dt.log
     networks:
       - internal
     restart: unless-stopped
