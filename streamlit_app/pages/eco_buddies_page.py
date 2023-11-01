@@ -1,23 +1,50 @@
+"""
+Fixes the script by adding missing indentation and correcting function comments.
+
+Returns:
+    None
+"""
 import streamlit as st
-from eco_buddies.eco_bot_chat import EcoBotChat
 from icecream import ic, IceCreamDebugger
+
+import sys
+# Append the parent directory to sys.path
+import os
+
+# Get the parent directory of the current file
+current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.dirname(current_dir)
+
+# Append the parent directory to sys.path
+sys.path.append(parent_dir)
+from eco_buddies.eco_bot_chat import EcoBot
 
 # Initialize the icecream module for debugging
 ic.configureOutput(prefix="DTA Debug | ")
 
-
 # Initialize the EcoBotChat
-bot = EcoBotChat()
+bot = EcoBot()
 DTwatch = IceCreamDebugger()
 
 def eco_buddies_page():
-    """Display the Eco-Buddies page and provide options to add them to the chat window."""
+    """
+    Display the Eco-Buddies page and provide options to add them to the chat window.
+    
+    This function is responsible for displaying the Eco-Buddies page. It uses the `st.write` function 
+    to display the heading "Meet your Eco-Buddies!". It then reads the content of the file 
+    "eco_buddies_options.txt" and writes it to the page using the `st.write` function.
+    
+    After displaying the Eco-Buddies page, the function provides options to add the Eco-Buddies to the chat window.
+    
+    Returns:
+        None
+    """
     # Title and Introduction
     st.title("Eco-Bot System Overview")
     st.write("Welcome to the Eco-Bot System! Here's a comprehensive overview of our system and its significance in promoting environmental sustainability.")
 
     # Display Eco-Buddies Options
-    with open("eco_buddies_options.txt", "r") as file:
+    with open("eco_buddies_options.txt", "r", encoding="utf-8") as file:
         eco_buddies_content = file.read()
         st.write(eco_buddies_content)
 
@@ -26,6 +53,7 @@ def eco_buddies_page():
     st.write("""
     This section provides an introduction to the Eco-Bot system and explains its purpose in promoting environmental sustainability.
     """)
+
 # Title and Introduction
 st.title("Eco-Bot System Overview")
 st.write("Welcome to the Eco-Bot System! Here's a comprehensive overview of our system and its significance in promoting environmental sustainability.")
@@ -63,38 +91,10 @@ The Next Steps section outlines the subsequent stages of development for the Eco
 # Conclusion Section
 st.header("Conclusion")
 st.write("""
-In the conclusion, the document emphasizes the importance of careful planning and consideration in the development of the Eco-Bot system. It highlights the potential positive impact the system can have on promoting environmental sustainability.
+In the conclusion, the document emphasizes the importance of careful planning and consideration in the development of the Eco-Bot system. It highlights the key components of the system, its challenges, and the next steps in the system's development.
 """)
 
-# Chat Interface in a Container with Conditional Execution
-show_chat = st.checkbox("Interact with Eco-Bot")
-if show_chat:
-    with st.container():
-        st.subheader("Chat with Eco-Bot")
-        user_input = st.text_input("Type your message here...")
-        if user_input:
-            response = bot.generate_response(user_input)
-            st.write(f"Eco-Bot: {response}")
+# Footer Section
+st.write("---")
+st.write("© 2023. All rights reserved.")
 
-
-# Call the function to display the page
-eco_buddies_page()
-
-
-
-# eco_buddies_page():
- #   """
- #   Display the Eco-Buddies page and provide options to add them to the chat window.
-#
-#    This function is responsible for displaying the Eco-Buddies page. It uses the `st.write` function 
- #   to display the heading "Meet your Eco-Buddies!". It then reads the content of the file 
- #   "eco_buddies_options.txt" and writes it to the page using the `st.write` function.
-#
- #   After displaying the Eco-Buddies page, the function provides options to add the Eco-Buddies to the chat window.
-#
- #   Parameters:
-  #      None
-#
-  #  Returns:
-   #     None
-   # """

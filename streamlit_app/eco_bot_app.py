@@ -1,17 +1,53 @@
-import sys
+"""
+ECO-BOT CHAT
+This is a simple chatbot that uses OpenAI's GPT-4 model to generate responses to user input.
+"""
+import os
+import openai
 import streamlit as st
 
-# append the parent directory to the Python path
-sys.path.append("..")
-from eco_buddies.eco_bot_chat import EcoBotChat
+from eco_buddies.eco_bot_chat import EcoBot
+from icecream import ic
+import logging
+from dotenv import load_dotenv
 
-bot = EcoBotChat()
+# Setup icecream for debugging
 
+ic.configureOutput(prefix="ECO-BOT Chat | ")
 
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+# Load API keys from .env file
+load_dotenv()
 
+api_key = os.getenv("OPENAI_API_KEY")
+openai.api_key = api_key
+
+bot = EcoBot()
+
+@st.cache_resource
+def get_response(user_input):
+    """
+    Cache the data returned by this function for improved performance.
+
+    Parameters:
+    - user_input (str): The input provided by the user.
+
+    Returns:
+    - str: The generated response.
+    """
+    return bot.generate_response(user_input)
 
 @st.cache_data
 def load_image(image_path):
+    """
+    Cache the data returned by this function for improved performance.
+
+    Parameters:
+    - image_path (str): The path to the image file.
+
+    Returns:
+    - bytes or None: The content of the image file as bytes, or None if the file is not found.
+    """
     try:
         return open(image_path, "rb").read()
     except FileNotFoundError:
@@ -40,7 +76,7 @@ if show_chat:
         if user_input:
             response = bot.generate_response(user_input)
             st.write(f"Eco-Bot: {response}")
-
+            
 
 # About Section in a Container
 with st.container():

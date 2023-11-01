@@ -1,17 +1,19 @@
-
-import sys
-# Append the parent directory to sys.path
-sys.path.append('C:/Users/User/OneDrive/Desktop/Buisness/KHM Smart Build/Coding/Projects/OCFS_projects/Eco-Bot/')
-import autogen
-import streamlit as st
-from streamlit_webrtc import webrtc_streamer
 import os
+import streamlit as st
+import streamlit.components.v1 as components
+from streamlit_webrtc import webrtc_streamer
 from icecream import ic
 import json
+import sys
+# Append the parent directory to sys.path
+sys.path.append("..")
 from gbts.gbts import GBTS
-from agents.autogen_agents import GeneralManagerAgent, Agent, DigitalTwinAgent
-from eco_buddies.Eco_Bot import EcoBot_Chat, EcoBot
-from eco_buddies.Eco_Buddies import EcoBuddy_Vision, EcoBuddy_Audio
+from eco_buddies.eco_bot_chat import  EcoBot
+
+
+# Initialize icecream setup
+ic.configureOutput(prefix="eco-bot-MVP_app | ")
+
 # Load GBTS prompts structure
 with open('C:/Users/User/OneDrive/Desktop/Buisness/KHM Smart Build/Coding/Projects/OCFS_projects/Eco-Bot/gbts/GBTS.json', 'r') as f:  # replace with the path to your GBTS prompts JSON file
     GBTS_PROMPTS = json.load(f)
@@ -31,10 +33,25 @@ st.set_page_config(
 # Load the Eco-Bot Image
 @st.cache_data
 def load_image(image_path):
+    """
+    Load an image from the given image path.
+
+    Parameters:
+        image_path (str): The path to the image file.
+
+    Returns:
+        bytes: The contents of the image file.
+    """
     return open(image_path, "rb").read()
 
 # Main App
 def main():
+    """
+    Generates the function comment for the given function body in a markdown code block with the correct language syntax.
+    
+    Returns:
+        str: The function comment in markdown format.
+    """
     # Apply custom styles
     with open("assets/styles/styles.css", "r") as f:
         st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
@@ -47,7 +64,7 @@ def main():
     # Display Eco-Bot Image
     eco_bot_image = load_image("assets/images/eco-bot.png")
     st.image(eco_bot_image, caption="Eco-Bot", width=200)
-
+    
 
     # Main Content Area
     with st.container():
@@ -113,17 +130,21 @@ def main():
             # Append user message to chat history
             chat_history += f"User: {user_message}\n"
             
+            with EcoBot(handle_input) as bot:
+                response = bot.respond_to_user(user_message)
+                chat_history += f"Eco-Bot: {response}\n"
+
             # Compute and append responses from Eco-Bot and EcoBuddies
             # (This is just a placeholder, replace with actual logic)
-            with GeneralManagerAgent():
-                chat_history += f"Eco-Bot: {EcoBot_Chat().generate_response(user_message)}\n"
+            #with GeneralManagerAgent():
+                #chat_history += f"Eco-Bot: {EcoBot_Chat().generate_response(user_message)}\n"
 
-                with DigitalTwinAgent():
-                    chat_history += f"Eco-Buddies: {EcoBot_Chat().generate_response(user_message)}\n"
-                response= EcoBot_Chat().generate_response(user_message)
+                #with DigitalTwinAgent():
+                    #chat_history += f"Eco-Buddies: {EcoBot_Chat().generate_response(user_message)}\n"
+                #response= EcoBot_Chat().generate_response(user_message)
 
                 
-                return  response
+                #return  response
             # Update session state with new chat history
         st.session_state.chat_history = chat_history
 
@@ -180,6 +201,10 @@ def load_html(filename):
         return f.read()
     
 # GBTS Interaction Page
+def d3_node_structure():
+    with open('index.html', 'r') as f:
+        html_code = f.read()
+    components.html(html_code, height=600)
 def gbts_interaction_page():
     st.write("Explore the Gaia-Bohm Thought Style (GBTS) interaction here.")
     
@@ -204,7 +229,7 @@ def gbts_interaction_page():
 
     # Display the current state of the GBTS tree (as a JSON string for now)
     st.json(gbts_instance.to_json())
-
+    d3_node_structure()
 
 #home_page()
 
