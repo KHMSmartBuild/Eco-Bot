@@ -99,3 +99,55 @@ header {
     border-radius: 5px;
     margin-top: 10px;
 }
+
+/* Eco-Bot Styles */
+.eco-bot {
+    max-width: 100%;
+    margin: 20px auto;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+    animation: rustleLeaves 2s infinite ease-in-out;
+}
+
+@keyframes rustleLeaves {
+    0% {
+        transform: rotate(0deg);
+    }
+    50% {
+        transform: rotate(-5deg);
+    }
+    100% {
+        transform: rotate(0deg);
+    }
+}
+
+.arm {
+    animation: flapArms 1s infinite alternate;
+    transform-origin: bottom;
+}
+
+@keyframes flapArms {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(-15deg);
+    }
+}
+
+/* Additional Styles */
+.leaf {
+    animation: rustleLeaves 2s infinite ease-in-out;
+}
+
+@keyframes rustleLeaves {
+    0% {
+        transform: rotate(0deg);
+    }
+    50% {
+        transform: rotate(-5deg);
+    }
+    100% {
+        transform: rotate(0deg);
+    }
+}

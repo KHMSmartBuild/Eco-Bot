@@ -1,12 +1,12 @@
-// Import D3
-import * as d3 from '../../../node_modules/d3/dist/d3.min.js';
+// Assuming D3 is loaded globally from the CDN in your HTML
+
+// Importing other modules
 import { createNodes, createLinks } from './nodesAndLinks.js';
 import { addDrag, addToolTips } from './interactivity.js';
+import seedData from './seedData.js';
 
-// Seed data
-const seedData = require('./seedData.js');
 const data = seedData;
-
+console.log("Script is running");
 // Create SVG container
 const svg = d3.select("body").append("svg")
     .attr("width", 800)

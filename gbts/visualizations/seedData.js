@@ -25,3 +25,5 @@ const seedData = {
         { source: "Canopy 2", target: "Wisdom 2" }
     ]
 };
+export default seedData;
+

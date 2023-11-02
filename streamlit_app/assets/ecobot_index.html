@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+    <header>
+        <h1>Interactive Avatar</h1>
+    </header>
+
+    <div class="main-content">
+        <svg id="avatar-container" width="400" height="400"></svg>
+    </div>
+
+    <script>
+        const svg = d3.select("#avatar-container");
+
+        const avatar = svg.append("g")
+            .attr("class", "eco-bot");
+
+        const image = avatar.append("image")
+            .attr("xlink:href", "streamlit_app/assets/images/Eco_bot-1.png")
+            .attr("x", 0)
+            .attr("y", 0)
+            .attr("width", 100)
+            .attr("height", 100);
+
+        // Attach nodes to different parts of the image
+        const arms = avatar.append("g")
+            .attr("class", "arms");
+        // Add arm elements to the "arms" group
+
+        const leaves = avatar.append("g")
+            .attr("class", "leaves");
+        // Add leaf elements to the "leaves" group
+
+        // Example animation: move the avatar to a new position
+        avatar.transition()
+            .duration(1000)
+            .attr("transform", "translate(200, 200)");
+
+        // Additional animation and interactivity code can be added here
+    </script>
+</body>
+</html>

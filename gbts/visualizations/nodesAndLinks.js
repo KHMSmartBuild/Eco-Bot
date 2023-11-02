@@ -1,5 +1,5 @@
 // Import D3 (assuming you're using ES6 modules)
-import * as d3 from 'd3';
+
 
 // Function to create nodes
 function createNodes(svg, data) {
