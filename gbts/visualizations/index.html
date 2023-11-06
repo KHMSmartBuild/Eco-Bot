@@ -4,13 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GBTS Visualization</title>
-    <!-- If you have a CSS file, link it here -->
     <link rel="stylesheet" href="styles.css">
-    <!-- Link to the D3.js library from a CDN -->
     <script src="https://d3js.org/d3.v5.min.js"></script>
 </head>
-<body>
-    <!-- Your D3.js script -->
+<body class="spring-theme"> <!-- Default theme, can be changed dynamically -->
+    <header>
+        <h1>Eco-Bot GBTS Visualization</h1>
+    </header>
+    <div class="main-content" id="visualization">
+        <!-- The D3 visualization will be appended here -->
+    </div>
+
+    <!-- Placeholder for buttons or other interactive controls -->
+    <div class="interaction-area">
+        <button class="button" id="toggle-theme">Toggle Theme</button>
+        <!-- More buttons can be added here -->
+    </div>
+
     <script type="module" src="./gbtsVisualization.js"></script>
 </body>
 </html>

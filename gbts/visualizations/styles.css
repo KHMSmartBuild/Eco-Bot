@@ -1,20 +1,103 @@
-/* General styles for the body and visualization container */
+/* General Styles */
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    margin: 0;
-    padding: 0;
+    background-color: #F5F7F9;  /* A light grey-blue background */
+    font-family: 'Arial', sans-serif;
+    color: #333;  /* Dark grey for general text */
 }
 
+/* Main Header */
+header {
+    background-color: #4CAF50;  /* Vibrant green for the header */
+    padding: 10px 0;
+    text-align: center;
+    color: white;
+    font-size: 1.5em;  /* Increase font size for header text */
+}
+
+/* Main Content Area */
+.main-content {
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: 20px;
+}
+
+/* Visualization SVG Styles */
 svg {
     display: block;
-    margin: 40px auto;
+    margin: auto;
     background-color: #fff;
     border: 1px solid #ddd;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Tooltip styles */
+/* Nodes and Links Styles for D3 Visualization */
+.node {
+    stroke: #fff;
+    stroke-width: 1.5px;
+}
+
+.link {
+    stroke: #999;
+    stroke-opacity: 0.6;
+}
+
+/* Eco-Bot Specific Styles */
+.eco-bot-node {
+    fill: #4CAF50;
+    cursor: pointer;
+    stroke: #fff;
+    stroke-width: 1.5px;
+    transition: transform 0.2s;
+}
+
+.eco-bot-node:hover {
+    transform: scale(1.05);
+}
+
+/* Buttons & Interactions */
+.button {
+    fill: #4CAF50;
+    cursor: pointer;
+    stroke: #fff;
+    stroke-width: 1px;
+}
+
+.button:hover {
+    fill: #45a049;
+}
+
+/* Seasonal Color Changes for Nodes */
+.spring-node {
+    fill: #A8E6CF;
+}
+
+.summer-node {
+    fill: #4CAF50;
+}
+
+.autumn-node {
+    fill: #D9A679;
+}
+
+.winter-node {
+    fill: #DDE1E4;
+}
+
+/* Animation for Leaf Nodes */
+.leaf {
+    fill: #76b852; /* A leafy green color */
+    animation: rustleLeaves 2s infinite ease-in-out;
+}
+
+@keyframes rustleLeaves {
+    0% { transform: rotate(0deg); }
+    50% { transform: rotate(-5deg); }
+    100% { transform: rotate(0deg); }
+}
+
+/* Tooltip Styles */
 .tooltip {
     position: absolute;
     text-align: center;
@@ -27,36 +110,10 @@ svg {
     transition: opacity 0.3s ease; /* Smooth transition for the tooltip */
 }
 
-/* Hover effects for nodes */
-circle:hover {
-    stroke: #555;
-    stroke-width: 2px;
-}
-
-/* Styles for links */
-line {
-    transition: opacity 0.3s ease; /* Smooth transition for links */
-}
-
-/* Responsive design */
+/* Responsive SVG Container */
 @media (max-width: 600px) {
     svg {
         width: 90%;
-        height: 400px;
+        height: auto; /* Adjust height automatically */
     }
-}
-
-/* If you have buttons or other UI elements */
-button {
-    padding: 10px 15px;
-    font-size: 14px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-button:hover {
-    background-color: #555;
-    color: #fff;
 }

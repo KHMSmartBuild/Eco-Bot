@@ -1,4 +1,7 @@
-import os
+"""
+The eco-bot-MVP_app.py script is used to demonstrait the working of multiple
+agents in a streamlit app.
+"""
 import streamlit as st
 import streamlit.components.v1 as components
 from streamlit_webrtc import webrtc_streamer
@@ -15,7 +18,7 @@ from eco_buddies.eco_bot_chat import  EcoBot
 ic.configureOutput(prefix="eco-bot-MVP_app | ")
 
 # Load GBTS prompts structure
-with open('C:/Users/User/OneDrive/Desktop/Buisness/KHM Smart Build/Coding/Projects/OCFS_projects/Eco-Bot/gbts/GBTS.json', 'r') as f:  # replace with the path to your GBTS prompts JSON file
+with open('C:/Users/User/OneDrive/Desktop/Buisness/KHM Smart Build/Coding/Projects/OCFS_projects/Eco-Bot/gbts/GBTS.json', 'r', encoding='utf-8') as f:  # replace with the path to your GBTS prompts JSON file
     GBTS_PROMPTS = json.load(f)
 
 # Initialize GBTS
@@ -53,7 +56,7 @@ def main():
         str: The function comment in markdown format.
     """
     # Apply custom styles
-    with open("assets/styles/styles.css", "r") as f:
+    with open("assets/styles/styles.css", "r", encoding="utf-8") as f:
         st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
     html_content = load_html("assets/site_layout.html")
     st.markdown(html_content, unsafe_allow_html=True)
@@ -79,22 +82,22 @@ def main():
 
         # Agent 1 in Quadrant 1
         with col1:
-            st.image(r"C:\Users\User\OneDrive\Desktop\Buisness\KHM Smart Build\Coding\Projects\OCFS_projects\Eco-Bot\streamlit_app\assets\images\eco_buddy1.png")
+            st.image(r"C:/Users/User/OneDrive/Desktop/Buisness/KHM Smart Build/Coding/Projects/OCFS_projects/Eco-Bot/streamlit_app/assets/images/eco_buddy1.png")
             st.text_area("Agent 1 Response:", value="", key="agent1_response")
 
         # Agent 2 in Quadrant 2
         with col2:
-            st.image(r"C:\Users\User\OneDrive\Desktop\Buisness\KHM Smart Build\Coding\Projects\OCFS_projects\Eco-Bot\streamlit_app\assets\images\eco_buddy2.png")
+            st.image(r"C:/Users/User/OneDrive/Desktop/Buisness/KHM Smart Build/Coding/Projects/OCFS_projects/Eco-Bot/streamlit_app/assets/images/eco_buddy2.png")
             st.text_area("Agent 2 Response:", value="", key="agent2_response")
 
         # Agent 3 in Quadrant 3
         with col3:
-            st.image(r"C:\Users\User\OneDrive\Desktop\Buisness\KHM Smart Build\Coding\Projects\OCFS_projects\Eco-Bot\streamlit_app\assets\images\eco_buddy3.png")
+            st.image(r"C:/Users/User/OneDrive/Desktop/Buisness/KHM Smart Build/Coding/Projects/OCFS_projects/Eco-Bot/streamlit_app/assets/images/eco_buddy3.png")
             st.text_area("Agent 3 Response:", value="", key="agent3_response")
 
         # Agent 4 in Quadrant 4
         with col4:
-            st.image(r"C:\Users\User\OneDrive\Desktop\Buisness\KHM Smart Build\Coding\Projects\OCFS_projects\Eco-Bot\streamlit_app\assets\images\eco_buddy4.png")
+            st.image(r"C:/Users/User/OneDrive/Desktop/Buisness/KHM Smart Build/Coding/Projects/OCFS_projects/Eco-Bot/streamlit_app/assets/images/eco_buddy4.png")
             st.text_area("Agent 4 Response:", value="", key="agent4_response")
             
     # Center Area for Visual Representation
@@ -110,10 +113,10 @@ def main():
         st.expander("Chat with Eco-Bot")
         st.text("Conversation History")
         st.text_area("Chat with Eco-Bot:", value="", key="main_conversation")
-
+        st.__cached__ = EcoBot().generate_response(user_input)
         # Placeholder for chat history
 
-        chat_history = "" 
+        chat_history = "response+\n, user_input+\n" 
 
         # Check if there's a previous chat history saved in the session state
         if 'chat_history' in st.session_state:
@@ -130,10 +133,6 @@ def main():
             # Append user message to chat history
             chat_history += f"User: {user_message}\n"
             
-            with EcoBot(handle_input) as bot:
-                response = bot.respond_to_user(user_message)
-                chat_history += f"Eco-Bot: {response}\n"
-
             # Compute and append responses from Eco-Bot and EcoBuddies
             # (This is just a placeholder, replace with actual logic)
             #with GeneralManagerAgent():
@@ -162,15 +161,32 @@ def main():
     # Display previous conversations, perhaps in a selectbox or list
     st.sidebar.text("Settings")
     # Settings options/buttons
+    st.sidebar.text("Help")
+    # Help options/buttons
+    st.sidebar.header("Menu")
+    st.sidebar.text("Previous Conversations")
+    # Display previous conversations, perhaps in a selectbox or list
+    st.sidebar.text("Settings")
+    # Settings options/buttons
+    if st.sidebar.button("Help"):
+        # Add your help functionality here
+        st.write("This is the help content.")
 
+    # Imagery from Pictory agent
+    st.container()
+    with st.text("Imagery"):
+     st.dataframe("Imagery from Pictory agent")
 
-    # Imagery
-    st.text("Imagery")
-    imagery_upload = st.file_uploader("Upload an image or other visual items", type=["jpg", "png", "jpeg"])
+    # TODO: Add imagery from Pictory agent
+    # Imagery from Pictory agent
+    #imagery_url = PictoryAgent().generate_imagery(keywords)
+    #st.image(imagery_url, caption="Imagery from Pictory agent")
 
-    # Key Points - Meeting Minutes
-    st.text("Key Points - Meeting Minutes")
-    meeting_minutes = st.text_area("Topics:", value="")
+    # Key Points - Meeting Minutes from parsing agent with gbts system
+    st.container()
+    with st.text("Key Points - Meeting Minutes"):
+     st.dataframe("Key Points - Meeting Minutes from parsing agent with gbts system")
+    
 
     # Key Points - Issues
     # Issues
@@ -178,7 +194,7 @@ def main():
     issues_covered = st.text_area("Issues Covered:", value="")
     issues_agreed = st.text_area("Issues Agreed:", value="")
     issues_pending = st.text_area("Issues Pending:", value="")
-
+    
     # User chat or Prompt
     st.text("User chat or Prompt")
     user_chat = st.text_area("Type your message:", value="", key="user_chat")
@@ -202,12 +218,15 @@ def load_html(filename):
     
 # GBTS Interaction Page
 def d3_node_structure():
-    with open('index.html', 'r') as f:
+    with open('index.html', 'r', encoding='utf-8') as f:
         html_code = f.read()
     components.html(html_code, height=600)
 def gbts_interaction_page():
-    st.write("Explore the Gaia-Bohm Thought Style (GBTS) interaction here.")
-    
+
+    st.container()
+    with st.write("Explore the Gaia-Bohm Thought Style (GBTS) interaction here."):
+        st.echo()
+        #gbts_instance = GBTS()
     # Example of guiding user through the first prompt
     if 'current_stage' not in st.session_state:
         st.session_state.current_stage = "Seed of Inquiry"
@@ -237,11 +256,11 @@ def home_page():
     """ display the home page """
     if home_page:
         st.write("Welcome to Eco-Bot! Let's make eco-friendly choices together.")
-        with GeneralManagerAgent():
-            input = st.text_input("Ask Eco-Bot a question:")
-            if input:
-                response = EcoBot_Chat.handle_input(input)
-                st.write(f"Eco-Bot: {response}")
+        #with GeneralManagerAgent():
+            #input = st.text_input("Ask Eco-Bot a question:")
+            #if input:
+                #response = EcoBot_Chat.handle_input(input)
+                #st.write(f"Eco-Bot: {response}")
 # Eco-Buddies Page
 def eco_buddies_page():
         """

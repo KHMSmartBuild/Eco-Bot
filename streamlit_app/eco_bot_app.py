@@ -1,15 +1,19 @@
 """
-ECO-BOT CHAT
-This is a simple chatbot that uses OpenAI's GPT-4 model to generate responses to user input.
+ECO-BOT Landing page
+This is a simple Eco-Bot chat bot that uses OpenAI's GPT-4 model to generate responses to user input.
 """
 import os
+import sys
 import openai
 import streamlit as st
-
-from eco_buddies.eco_bot_chat import EcoBot
+import streamlit.components.v1 as components
 from icecream import ic
 import logging
 from dotenv import load_dotenv
+sys.path.append("..")
+from eco_buddies.eco_bot_chat import EcoBot
+
+
 
 # Setup icecream for debugging
 
@@ -62,20 +66,26 @@ st.subheader("Your eco-friendly assistant powered by OpenAI.")
 st.write("Interact with Eco-Bot and learn more about our mission and features.")
 
 # Display Eco-Bot Image
+# Display Eco-Bot Image
 eco_bot_image = load_image("assets/images/eco-bot.png")
 if eco_bot_image:
     st.image(eco_bot_image, caption="Eco-Bot", use_column_width=False, width=200)
 
+# Display Interactive Avatar
+with open("assets/ecobot_index.html", "r", encoding="utf-8") as f:
+    avatar_html = f.read()
+components.html(avatar_html, height=450)
 # Chat Interface in a Container with Conditional Execution
 # Chat Interface in a Container with Conditional Execution
 show_chat = st.checkbox("Show Chat Interface")
 if show_chat:
     with st.container():
         st.subheader("Chat with Eco-Bot")
-        user_input = st.text_input("Type your message here...")
-        if user_input:
-            response = bot.generate_response(user_input)
+        chat_input = st.text_input("Type your message here...")  # <-- Renamed variable
+        if chat_input:
+            response = bot.generate_response(chat_input)
             st.write(f"Eco-Bot: {response}")
+
             
 
 # About Section in a Container
@@ -95,29 +105,41 @@ with st.container():
     - Engage and Educate Communities
     """)
 
-# Roadmap with a Timeline using Session State
-if "milestone" not in st.session_state:
-    st.session_state.milestone = 0
 
-milestones = [
-    "Conceptualization & Initial Design",
-    "Development of MVP",
-    "Beta Testing & Feedback Collection",
-    "Official Launch & Expansion"
-]
-
+# Roadmap with a Timeline using Session State and Progress Bars
 with st.container():
     st.header("Roadmap")
     st.write("Our journey is just beginning. Explore our roadmap to see our milestones and future plans.")
-    
-    for index, milestone in enumerate(milestones):
-        if index <= st.session_state.milestone:
-            st.write(f"✅ {milestone}")
-        else:
-            st.write(f"🔜 {milestone}")
 
+    # Define milestones with expected completion dates and descriptions
+    milestones = [
+        {"title": "Conceptualization & Initial Design", "date": "Q1 2023", "description": "Laying the groundwork for Eco-Bot's development."},
+        {"title": "Development of MVP", "date": "Q2 2023", "description": "Creating a minimum viable product for initial user feedback."},
+        {"title": "Beta Testing & Feedback Collection", "date": "Q3 2023", "description": "Testing with select users to refine and improve."},
+        {"title": "Official Launch & Expansion", "date": "Q4 2023", "description": "Launching Eco-Bot to the public and expanding features."},
+    ]
+
+    # Display each milestone with a progress bar
+    for index, milestone in enumerate(milestones):
+        col1, col2 = st.columns([3, 1])
+        with col1:
+            st.markdown(f"### {milestone['title']}")
+            st.progress((index + 1) * 25)
+            st.caption(milestone['description'])
+        with col2:
+            st.write(milestone['date'])
+
+        if index < st.session_state.milestone:
+            st.success(f"✅ Completed")
+        else:
+            st.warning(f"🔜 Upcoming")
+
+    # Button to advance milestones
     if st.button("Advance to Next Milestone"):
-        st.session_state.milestone += 1
+        if st.session_state.milestone < len(milestones) - 1:
+            st.session_state.milestone += 1
+        else:
+            st.session_state.milestone = 0  # Reset after the last milestone
 
 # Crowdfunding Section in a Container
 with st.container():

@@ -1,10 +1,9 @@
 import openai
 import cv2
-from autogen.agentchat import conversable_agent
 from PIL import Image
 from icecream import ic
-from agents.autogen_agents import GeneralManagerAgent, Agent, DigitalTwinAgent
-from gbts.gbts import GBTS
+from ..agents.agent_classes import GeneralManager, Agent, DigitalTwinAgent
+from ..gbts.gbts import GBTS
 
 class EcoBot_Chat:
     """
@@ -13,17 +12,17 @@ class EcoBot_Chat:
     """
 
     def __init__(self):
-        self.general_manager = GeneralManagerAgent(self)
+        self.general_manager = GeneralManager(self)
         self.personality = self.load_personality()
         self.system_message = "Hello! I'm Eco-Bot, The sustainability AI bot, here to help you with environmental information and tips also Eco-Missions. With my eco-buddies' help, our plan is to..."
         self.gbts = GBTS()
-        self.gbts.initiate_prompt_tree("Seed of Inquiry")
+        self.gbts.build_from_conversation("Seed of Inquiry")
 
     @staticmethod
     def load_personality():
         """Load the personality script for the bot."""
         try:
-            with open("C:/Users/User/OneDrive/Desktop/Buisness/KHM Smart Build/Coding/Projects/OCFS_projects/Eco-Bot/eco_buddies/eco_bot_personality.js", "r") as file:
+            with open("C:/Users/User/OneDrive/Desktop/Buisness/KHM Smart Build/Coding/Projects/OCFS_projects/Eco-Bot/eco_buddies/eco_bot_personality.js", "r", encoding="utf-8") as file:
                 return file.read()
         except FileNotFoundError:
             ic("Personality file not found!")
@@ -66,3 +65,9 @@ class EcoBot_Chat:
         except Exception as e:
             ic(f"Error generating response: {e}")
             return "Sorry, I couldn't generate a response at the moment."
+        
+
+    # Update the GBTS tree based on the user's response
+    def initiate_prompt_tree(self, user_response):
+        """Update the GBTS tree based on the user's response."""
+        self.gbts.root_node.response = user_response

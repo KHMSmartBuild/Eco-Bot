@@ -5,27 +5,35 @@ The agent class is responsible for creating the agent and the digital twin agent
 
 
 """
+import os
+import sys
+import json
+import openai
+from dotenv import load_dotenv
 import autogen
+from autogen.agentchat import AssistantAgent, UserProxyAgent, Agent, GroupChat, GroupChatManager
+from agents.dt.digital_twin import DigitalTwinAgent
 
-class GeneralManager(autogen.User_Proxy_Agent):
-    def __init__(self, name):
+
+class GeneralManager():
+    def __init__(self, name, role, llm_config=None):
         super().__init__(name=name)
-        # Initialize subordinate agents like Task Master, Safety Agents, etc.
-        self.task_master = TaskMaster(name="Task Master")
-        self.main_safety_agent = SafetyAgent(name="Main Safety Agent")
-        self.error_handling_safety_agent = SafetyAgent(name="Error Handling Safety Agent")
-        self.digital_twin_agent = DigitalTwinAgent(name="Digital Twin Agent")
+        self.understanding_agent = UnderstandingAgent(name="Understanding Agent", role=GroupChatManager)
+        self.task_master = TaskMaster(name="Task Master", role=AssistantAgent)
+        self.main_safety_agent = SafetyAgent(name="Main Safety Agent", role=AssistantAgent)
+        self.error_handling_safety_agent = SafetyAgent(name="Error Handling Safety Agent", role=AssistantAgent)
+        self.digital_twin_agent = DigitalTwinAgent(name="Digital Twin Agent", role=AssistantAgent)
         self.agents = [DigitalTwinAgent(), AssistantAgent()]
-        self.add_subordinate_agents(self.agents)
-        self.add_subordinate_agents([self.task_master, self.main_safety_agent, self.error_handling_safety_agent, self.digital_twin_agent])
-        # Add any other agents as required.
-
+        self.add_subordinate_agents(self.agents, role=Agent)
+        self.add_subordinate_agents([self.task_master, self.main_safety_agent, self.error_handling_safety_agent, self.digital_twin_agent], role=AssistantAgent)
+        self.llm_config = llm_config
+        self.role = UserProxyAgent
     def handle_message(self, message):
         # This is a simplified representation.
         # Here, you can add logic to decide which agent the message should be forwarded to.
         
         # For the sake of illustration, let's assume all messages are tasks and send them to Task Master
-        response = self.task_master.handle_message(message)
+        get_responses = self.understanding_agent.handle_message(message)
 
         # Error handling
         if "error" in response.lower():
@@ -57,45 +65,7 @@ class GeneralManager(autogen.User_Proxy_Agent):
         digital_twin = DigitalTwinAgent(agent)
         return agent, digital_twin
     
-    def control_video_playback(user_input):
-        """
-        Control the video playback based on the user input.
 
-        Args:
-            user_input (str): The user input.
-        """
-        video_platforms = {
-                "YouTube": {
-                    "play": #youtube_video.play,
-                    "pause": #youtube_video.pause,
-                    "skip": #youtube_video.skip,
-                    "rewind": #youtube_video.rewind,
-                    "search": #youtube_video.search
-                },
-                "Vimeo": {
-                    "play": #vimeo_video.play,
-                    "pause": #vimeo_video.pause,
-                    "skip": #vimeo_video.skip,
-                    "rewind": #vimeo_video.rewind,
-                    "search": #vimeo_video.search
-                },
-                "Other": {
-                    "play": #other_video_platform.play,
-                    "pause": #other_video_platform.pause,
-                    "skip": #other_video_platform.skip,
-                    "rewind": #other_video_platform.rewind,
-                    "search": #other_video_platform.search
-                }
-        }
-        
-
-        for platform, actions in video_platforms.items():
-            if platform == video_platform:
-                for action, method in actions.items():
-                    if action in user_input:
-                        method()
-
-        return user_input
 
 class Agent:
     def __init__(self, task):

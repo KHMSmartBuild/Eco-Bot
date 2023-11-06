@@ -4,7 +4,7 @@ const avatar = svg.append("g")
     .attr("class", "eco-bot");
 
 const image = avatar.append("image")
-    .attr("xlink:href", "streamlit_app/assets/images/Eco_bot-1.png")
+    .attr("xlink:href", "images/Eco_bot-1.png")
     .attr("x", 0)
     .attr("y", 0)
     .attr("width", 100)
