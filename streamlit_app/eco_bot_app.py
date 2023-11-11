@@ -4,23 +4,41 @@ This is a simple Eco-Bot chat bot that uses OpenAI's GPT-4 model to generate res
 """
 import os
 import sys
+import datetime
+import logging
 import openai
 import streamlit as st
 import streamlit.components.v1 as components
 from icecream import ic
-import logging
 from dotenv import load_dotenv
 sys.path.append("..")
 from eco_buddies.eco_bot_chat import EcoBot
 
 
 
-# Setup icecream for debugging
+# Configure icecream to save output to a file in the debug folder
+def setup_icecream_debugging():
+    debug_folder = "debug"
+    if not os.path.exists(debug_folder):
+        os.makedirs(debug_folder)
+    debug_timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")  # Renamed variable
+    debug_file = os.path.join(debug_folder, f"debug_{debug_timestamp}.txt")  # Use the renamed variable
+    with open(debug_file, "a+", encoding="utf-8") as debug_file_handle:
+        ic.configureOutput(outputFunction=lambda s: debug_file_handle.write(s + '\n'))
 
-ic.configureOutput(prefix="ECO-BOT Chat | ")
+# Call this function at the beginning of your script or before you start logging
+setup_icecream_debugging()
 
-logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-# Load API keys from .env file
+# Setup logging
+log_folder = "logs"
+if not os.path.exists(log_folder):
+    os.makedirs(log_folder)
+log_timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")  # Renamed variable
+log_file = os.path.join(log_folder, f"log_{log_timestamp}.txt")  # Use the renamed variable
+
+# Configure the logging module to save logs to the log file
+log_format = '%(asctime)s - %(levelname)s - Landing Page - %(message)s'
+logging.basicConfig(filename=log_file, level=logging.DEBUG, format=log_format)# Load API keys from .env file
 load_dotenv()
 
 api_key = os.getenv("OPENAI_API_KEY")
@@ -39,7 +57,8 @@ def get_response(user_input):
     Returns:
     - str: The generated response.
     """
-    return bot.generate_response(user_input)
+    return bot.handle_input(user_input)
+
 
 @st.cache_data
 def load_image(image_path):
@@ -72,9 +91,12 @@ if eco_bot_image:
     st.image(eco_bot_image, caption="Eco-Bot", use_column_width=False, width=200)
 
 # Display Interactive Avatar
-with open("assets/ecobot_index.html", "r", encoding="utf-8") as f:
-    avatar_html = f.read()
-components.html(avatar_html, height=450)
+
+show_avatar = st.checkbox("Show Interactive Avatar")
+if show_avatar:
+    with open("assets/ecobot_index.html", "r", encoding="utf-8") as f:
+        avatar_html = f.read()
+    components.html(avatar_html, height=450)
 # Chat Interface in a Container with Conditional Execution
 # Chat Interface in a Container with Conditional Execution
 show_chat = st.checkbox("Show Chat Interface")
@@ -83,17 +105,17 @@ if show_chat:
         st.subheader("Chat with Eco-Bot")
         chat_input = st.text_input("Type your message here...")  # <-- Renamed variable
         if chat_input:
-            response = bot.generate_response(chat_input)
+            response = bot.handle_input(chat_input)
             st.write(f"Eco-Bot: {response}")
-
-            
-
+        
 # About Section in a Container
 with st.container():
     st.header("About Eco-Bot")
     st.write("""
-    Eco-Bot is designed to address environmental challenges and provide eco-friendly solutions.
-    Learn more about our mission, benefits, and the impact we aim to create.
+    Eco-Bot is not just another bot; it's a movement. In a world grappling with environmental challenges, 
+    Eco-Bot emerges as a beacon of hope, guiding users towards a sustainable future. 
+    By integrating technology with environmental consciousness, 
+    Eco-Bot aims to make green living accessible and enjoyable for everyon.
     """)
 
 # Pitch Deck Section in a Container
@@ -118,6 +140,8 @@ with st.container():
         {"title": "Beta Testing & Feedback Collection", "date": "Q3 2023", "description": "Testing with select users to refine and improve."},
         {"title": "Official Launch & Expansion", "date": "Q4 2023", "description": "Launching Eco-Bot to the public and expanding features."},
     ]
+    if 'milestone' not in st.session_state:
+        st.session_state.milestone = 0  # Or another appropriate default value
 
     # Display each milestone with a progress bar
     for index, milestone in enumerate(milestones):

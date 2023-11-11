@@ -1,0 +1,11 @@
+Agent Name,Interacts With,Dependencies,Functions,System Messages,Prompt Lists
+UnderstandingAgent,"WhatAgent, HowAgent, WhyAgent",None,handle_message,None,Extracted prompts
+TaskMaster,None,None,handle_message,"Task received: {message}",None
+MainSafetyAgent,SafetyAgent,None,"handle_message, read_safety_agent_reports, process_reports","Alert: {message}",None
+WorkerAgent,TaskDelegator,None,handle_message,"Acknowledges task: {message}",None
+TaskMaker,TaskDelegator,None,formulate_task,"Formulated Task: {message}",None
+TaskDelegator,WorkerAgents,WorkerAgents,delegate_task,None,None
+GeneralManager,"UnderstandingAgent, TaskMaster, MainSafetyAgent",None,"handle_message, monitor_safety, manage_conversation, create_agent","Script is safe, Safety breach detected!",None
+DigitalTwinAgent,Agent,Agent,None,"Log error, Log unsafe script",None
+PictoryAgent,None,Pictory API,"generate_imagery, out","Pictory agent received your input.",None
+EcoBot,"GeneralManager, MainSafetyAgent, TaskMaker, TaskDelegator, WorkerAgents","GeneralManager, MainSafetyAgent, TaskMaker, TaskDelegator, WorkerAgents",handle_message,initiate_chat,"Goodbye!",None

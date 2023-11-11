@@ -1,58 +1,68 @@
-// Assuming D3 is loaded globally from the CDN in your HTML
+// Description: This file contains the main visualization script.
+/**
+ * This file contains the main visualization script.
+ * It is responsible for rendering the GBTS visualization on the webpage.
+ * 
+ * Author: [Kyle Morgan]
+ * Version: 1.0
+ * Date: [11/11/2023]
+ */
+// gbtsVisualization.js
 
-// Importing other modules
+import * as d3 from "../node_modules/d3";
 import { createNodes, createLinks } from './nodesAndLinks.js';
-import { addDrag, addToolTips } from './interactivity.js';
+import { addDrag, addToolTips, handleMouseOver, handleMouseOut, handleClick, showGBTS } from './interactivity.js';
 import seedData from './seedData.js';
 
-const data = seedData;
-console.log("Script is running");
-// Create SVG container
-const svg = d3.select("body").append("svg")
-    .attr("width", 800)
-    .attr("height", 600);
+// Function to initialize the force-directed graph
+function initializeForceGraph() {
+    const data = seedData;
+    const width = 800;
+    const height = 600;
 
-// Initialize force simulation
-const simulation = d3.forceSimulation(data.nodes)
-    .force("link", d3.forceLink(data.links).id(d => d.id))
-    .force("charge", d3.forceManyBody())
-    .force("center", d3.forceCenter(400, 300));
+    // Append the SVG object to the body of the page
+    const svgContainer = d3.select("#visualization")
+        .append("svg")
+        .attr("width", width)
+        .attr("height", height);
 
-// Create nodes and links using the modular functions
-const nodes = createNodes(svg, data);
-const links = createLinks(svg, data);
+    // Initialize the force simulation
+    const simulation = d3.forceSimulation(data.nodes)
+        .force("link", d3.forceLink(data.links).id(d => d.id))
+        .force("charge", d3.forceManyBody())
+        .force("center", d3.forceCenter(width / 2, height / 2));
 
-// Add drag behavior to nodes
-nodes.call(addDrag(simulation));
+    // Create the links and nodes using the provided functions
+    const links = createLinks(svgContainer, data.links);
+    const nodes = createNodes(svgContainer, data.nodes);
 
-// Add tooltips to nodes
-addToolTips(nodes);
+    // Add drag behavior to nodes
+    nodes.call(addDrag(simulation));
 
-// Update positions on tick
-simulation.on("tick", () => {
-    links.attr("x1", d => d.source.x)
-        .attr("y1", d => d.source.y)
-        .attr("x2", d => d.target.x)
-        .attr("y2", d => d.target.y);
+    // Add tooltips to nodes
+    addToolTips(nodes);
 
-    nodes.attr("cx", d => d.x)
-        .attr("cy", d => d.y);
-});
+    // Add mouse event handlers
+    nodes.on('mouseover', handleMouseOver)
+        .on('mouseout', handleMouseOut)
+        .on('click', handleClick);
 
-// Drag functions (these can be removed if you're using the addDrag function)
-function dragstarted(d) {
-    if (!d3.event.active) simulation.alphaTarget(0.3).restart();
-    d.fx = d.x;
-    d.fy = d.y;
+    // Update the positions of the nodes and links on each simulation 'tick'
+    simulation.on("tick", () => {
+        links.attr("x1", d => d.source.x)
+            .attr("y1", d => d.source.y)
+            .attr("x2", d => d.target.x)
+            .attr("y2", d => d.target.y);
+
+        nodes.attr("cx", d => d.x)
+            .attr("cy", d => d.y);
+    });
 }
 
-function dragged(d) {
-    d.fx = d3.event.x;
-    d.fy = d3.event.y;
-}
+// Add an event listener for the 'Show GBTS' button
+d3.select('#show-gbts').on('click', showGBTS);
 
-function dragended(d) {
-    if (!d3.event.active) simulation.alphaTarget(0);
-    d.fx = null;
-    d.fy = null;
-}
+// Call the function to initialize the graph
+initializeForceGraph();
+
+export { initializeForceGraph };

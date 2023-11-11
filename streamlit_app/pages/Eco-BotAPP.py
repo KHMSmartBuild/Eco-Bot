@@ -3,15 +3,41 @@
 # Company: KHM Smart Build
 # Description: Hybrid version of the Eco-Bot MVP Streamlit app.
 # Date: 2023-05-10
-
+import streamlit as st
+from icecream import ic
+import logging
+import os
+import datetime
 import sys
 
 # Append the parent directory to sys.path
 sys.path.append('C:/Users/User/OneDrive/Desktop/Buisness/KHM Smart Build/Coding/Projects/OCFS_projects/Eco-Bot/')
 
-import streamlit as st
-from icecream import ic
 from eco_buddies.eco_bot_chat import EcoBot
+
+# Configure icecream to save output to a file in the debug folder
+def setup_icecream_debugging():
+    debug_folder = "debug"
+    if not os.path.exists(debug_folder):
+        os.makedirs(debug_folder)
+    debug_timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")  # Renamed variable
+    debug_file = os.path.join(debug_folder, f"debug_{debug_timestamp}.txt")  # Use the renamed variable
+    with open(debug_file, "a+", encoding="utf-8") as debug_file_handle:
+        ic.configureOutput(outputFunction=lambda s: debug_file_handle.write(s + '\n'))
+
+# Call this function at the beginning of your script or before you start logging
+setup_icecream_debugging()
+
+# Setup logging
+log_folder = "logs"
+if not os.path.exists(log_folder):
+    os.makedirs(log_folder)
+log_timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")  # Renamed variable
+log_file = os.path.join(log_folder, f"log_{log_timestamp}.txt")  # Use the renamed variable
+
+# Configure the logging module to save logs to the log file
+log_format = '%(asctime)s - %(levelname)s - Eco-Bot Chat - %(message)s'
+logging.basicConfig(filename=log_file, level=logging.DEBUG, format=log_format)
 
 # Streamlit App Configuration
 st.set_page_config(
@@ -26,7 +52,7 @@ ecobot_chat = EcoBot()
 
 
 # Utility Functions
-@st.cache
+@st.cache_data
 def load_image(image_path):
     try:
         return open(image_path, "rb").read()

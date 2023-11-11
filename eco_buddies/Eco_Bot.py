@@ -1,73 +1,107 @@
+"""
+This module is used to test the Eco-Bot vision functionality.
+"""
+from IPython.display import display, Image, Audio
+
+import cv2  # We're using OpenCV to read video
+import base64
+import time
 import openai
-import cv2
-from PIL import Image
-from icecream import ic
-from ..agents.agent_classes import GeneralManager, Agent, DigitalTwinAgent
-from ..gbts.gbts import GBTS
+import os
+import requests
+import os
+from dotenv import load_dotenv
+from openai import OpenAI
 
-class EcoBot_Chat:
-    """
-    Represents the main bot that interacts with the user.
-    Handles user input and generates responses using OpenAI's GPT-4 model.
-    """
+# Load API keys from .env file
+load_dotenv()
 
-    def __init__(self):
-        self.general_manager = GeneralManager(self)
-        self.personality = self.load_personality()
-        self.system_message = "Hello! I'm Eco-Bot, The sustainability AI bot, here to help you with environmental information and tips also Eco-Missions. With my eco-buddies' help, our plan is to..."
-        self.gbts = GBTS()
-        self.gbts.build_from_conversation("Seed of Inquiry")
+client = OpenAI()
+client.api_key = os.getenv("OPENAI_API_KEY")
 
-    @staticmethod
-    def load_personality():
-        """Load the personality script for the bot."""
-        try:
-            with open("C:/Users/User/OneDrive/Desktop/Buisness/KHM Smart Build/Coding/Projects/OCFS_projects/Eco-Bot/eco_buddies/eco_bot_personality.js", "r", encoding="utf-8") as file:
-                return file.read()
-        except FileNotFoundError:
-            ic("Personality file not found!")
-            return ""
+class EcoBot_Vision:
+    response = client.chat.completions.create(
+        model="gpt-4-vision-preview",
+        messages=[
+            {
+                "role": "user",
+                "content": [
+                    {"type": "text", "text": "What’s in this image?"},
+                    {
+                        "type": "image_url",
+                        "image_url": {
+                            "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg",
+                        },
+                    },
+                ],
+            }
+        ],
+        max_tokens=300,
+    )
 
-    def handle_input(self, user_input):
-        """Manage the conversation based on user input."""
-        response = self.general_manager.manage_conversation(user_input)
+    print(response.choices[0])
+    # TODO - CHANGE the code to allow user to input the image, display the image and the response 
 
-        # If the user's input matches the expected response type for the current GBTS node
-        if self.gbts.root_node.response_type == "Open Dialogue":
-            # Save user's response in the current node
-            self.gbts.root_node.response = user_input
+class EcoBot_Video_Vision:
 
-            # Move to the next node in GBTS based on user's input (for simplicity, moving to the first child)
-            if self.gbts.root_node.children:
-                self.gbts.root_node = self.gbts.root_node.children[0]
+    def run_video(self, video_path):
+        video = cv2.VideoCapture(video_path)
 
-            # Provide the prompt for the next node
-            next_prompt = self.gbts.root_node.prompt
-        else:
-            # If user's response doesn't match the expected response type, provide guidance
-            next_prompt = self.gbts.root_node.guidance
+        base64Frames = []
+        while video.isOpened():
+            success, frame = video.read()
+            if not success:
+                break
+            _, buffer = cv2.imencode(".jpg", frame)
+            base64Frames.append(base64.b64encode(buffer).decode("utf-8"))
 
-        return response, next_prompt
+        video.release()
+        print(len(base64Frames), "frames read.")
 
-    def generate_response(self, user_input):
-        """Generate a response using OpenAI's GPT-4 model."""
-        try:
-            response = openai.Completion.create(
-                engine="gpt-4",
-                prompt=f"{self.system_message} You are Eco-Bot {self.personality}\n{user_input}",
-                temperature=0.7,
-                max_tokens=8000,
-                n=1,
-                stop=None,
-                log_level="info"
-            )
-            return response.choices[0].text.strip()
-        except Exception as e:
-            ic(f"Error generating response: {e}")
-            return "Sorry, I couldn't generate a response at the moment."
-        
+    def display_video(self, base64Frames):
+        display_handle = display(None, display_id=True)
+        for img in base64Frames:
+            display_handle.update(Image(data=base64.b64decode(img.encode("utf-8"))))
+            time.sleep(0.025)
 
-    # Update the GBTS tree based on the user's response
-    def initiate_prompt_tree(self, user_response):
-        """Update the GBTS tree based on the user's response."""
-        self.gbts.root_node.response = user_response
+    def prompt(self, base64Frames):
+        PROMPT_MESSAGES = [
+            {
+                "role": "user",
+                "content": [
+                    "These are frames from a video that I want to upload. Generate a compelling description that I can upload along with the video.",
+                    *map(lambda x: {"image": x, "resize": 768}, base64Frames[0::10]),
+                ],
+            },
+        ]
+        params = {
+            "model": "gpt-4-vision-preview",
+            "messages": PROMPT_MESSAGES,
+            "api_key": os.environ["OPENAI_API_KEY"],
+            "headers": {"Openai-Version": "2020-11-07"},
+            "max_tokens": 200,
+        }
+
+        result = openai.ChatCompletion.create(**params)
+        print(result.choices[0].message.content)
+
+    def create_narraitor(self, base64Frames):
+        PROMPT_MESSAGES = [
+            {
+                "role": "user",
+                "content": [
+                    "These are frames of a video. Create a short voiceover script in the style of David Attenborough. Only include the narration.",
+                    *map(lambda x: {"image": x, "resize": 768}, base64Frames[0::10]),
+                ],
+            },
+        ]
+        params = {
+            "model": "gpt-4-vision-preview",
+            "messages": PROMPT_MESSAGES,
+            "api_key": os.environ["OPENAI_API_KEY"],
+            "headers": {"Openai-Version": "2020-11-07"},
+            "max_tokens": 500,
+        }
+
+        result = openai.ChatCompletion.create(**params)
+        print(result.choices[0].message.content)

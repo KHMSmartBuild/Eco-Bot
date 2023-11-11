@@ -25,7 +25,22 @@ ic.configureOutput(prefix="DTA Debug | ")
 # Initialize the EcoBotChat
 bot = EcoBot()
 DTwatch = IceCreamDebugger()
+@st.cache_data
+def load_image(image_path):
+    """
+    Cache the data returned by this function for improved performance.
 
+    Parameters:
+    - image_path (str): The path to the image file.
+
+    Returns:
+    - bytes or None: The content of the image file as bytes, or None if the file is not found.
+    """
+    try:
+        return open(image_path, "rb").read()
+    except FileNotFoundError:
+        st.error(f"Error: Image not found at {image_path}")
+        return None
 def eco_buddies_page():
     """
     Display the Eco-Buddies page and provide options to add them to the chat window.
@@ -61,11 +76,18 @@ st.write("Welcome to the Eco-Bot System! Here's a comprehensive overview of our 
 # Overview Section
 st.header("Overview")
 st.write("""
-This section provides an introduction to the Eco-Bot system and explains its purpose in promoting environmental sustainability.
+Eco-Bot is envisioned as an interactive, educational, and engaging AI bot focused on promoting ecological and environmental awareness and actions. 
+It's designed to navigate users through a rich, exploratory journey within the realms of environmental knowledge, utilizing a unique approach, 
+potentially named the Gaia-Bohm Thought Style (GBTS).
 """)
 
 # Agent Hierarchy Section
 st.header("Agent Hierarchy")
+# Display Agent Hierarchy Image
+eco_bot_image = load_image("assets/images/Eco-Bot agents flow.png")
+if eco_bot_image:
+    st.image(eco_bot_image, caption="Eco-Bot", use_column_width=True, width=800)
+
 st.write("""
 The Agent Hierarchy section describes the three levels of agents in the Eco-Bot system: Managerial Agents, Task Team Agents, and Worker Team Agents. It outlines their respective roles and responsibilities in the system.
 """)

@@ -4,8 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GBTS Visualization</title>
-    <link rel="stylesheet" href="styles.css">
-    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <!-- Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="./styles.css">
 </head>
 <body class="spring-theme"> <!-- Default theme, can be changed dynamically -->
     <header>
@@ -13,14 +15,19 @@
     </header>
     <div class="main-content" id="visualization">
         <!-- The D3 visualization will be appended here -->
-    </div>
 
-    <!-- Placeholder for buttons or other interactive controls -->
+        <div id="treeContainer" class="w-full h-screen"></div>
+    </div>
+    <div class="Show GBTS">
+        <button class="button" id="show-gbts">Show GBTS</button>
+    </div>
     <div class="interaction-area">
+        <button class="button" id="create-new-chat">Create new chat</button>
         <button class="button" id="toggle-theme">Toggle Theme</button>
         <!-- More buttons can be added here -->
     </div>
-
-    <script type="module" src="./gbtsVisualization.js"></script>
+    <!-- Three.js and D3.js Visualizations -->
+    <script type="module" src="conversation_tree.js" ></script>
+    <script type="module" src="gbtsVisualization.js"></script>
 </body>
 </html>

@@ -34,7 +34,7 @@ svg {
 
 /* Nodes and Links Styles for D3 Visualization */
 .node {
-    stroke: #fff;
+    stroke: #ffffff;
     stroke-width: 1.5px;
 }
 

@@ -6,76 +6,266 @@ The agent class is responsible for creating the agent and the digital twin agent
 
 """
 import os
-import sys
-import json
 import openai
 from dotenv import load_dotenv
 import autogen
 from autogen.agentchat import AssistantAgent, UserProxyAgent, Agent, GroupChat, GroupChatManager
-from agents.dt.digital_twin import DigitalTwinAgent
+from dt.digital_twin import DigitalTwinAgent
 
 
-class GeneralManager():
-    def __init__(self, name, role, llm_config=None):
-        super().__init__(name=name)
-        self.understanding_agent = UnderstandingAgent(name="Understanding Agent", role=GroupChatManager)
-        self.task_master = TaskMaster(name="Task Master", role=AssistantAgent)
-        self.main_safety_agent = SafetyAgent(name="Main Safety Agent", role=AssistantAgent)
-        self.error_handling_safety_agent = SafetyAgent(name="Error Handling Safety Agent", role=AssistantAgent)
-        self.digital_twin_agent = DigitalTwinAgent(name="Digital Twin Agent", role=AssistantAgent)
-        self.agents = [DigitalTwinAgent(), AssistantAgent()]
-        self.add_subordinate_agents(self.agents, role=Agent)
-        self.add_subordinate_agents([self.task_master, self.main_safety_agent, self.error_handling_safety_agent, self.digital_twin_agent], role=AssistantAgent)
-        self.llm_config = llm_config
-        self.role = UserProxyAgent
-    def handle_message(self, message):
-        # This is a simplified representation.
-        # Here, you can add logic to decide which agent the message should be forwarded to.
-        
-        # For the sake of illustration, let's assume all messages are tasks and send them to Task Master
-        get_responses = self.understanding_agent.handle_message(message)
+load_dotenv()
 
-        # Error handling
-        if "error" in response.lower():
-            # Handle errors, potentially sending it to Error Handling Safety Agent
-            error_response = self.error_handling_safety_agent.handle_message(response)
-            return error_response
-        
-        return response
+openai.api_key = os.getenv("OPENAI_API_KEY")
+openai.organization = os.getenv("OPENAI_ORGANIZATION")
+
+config = {
+    "api_key": openai.api_key,
+    "response": "...",
+    "prompt": "...",
+    "message": "...",
+    "engine": "gpt-3",
+    "temperature": 0.72,
+    "max_tokens": 1500,
+    "top_p": 1,
+    "frequency_penalty": 0.5,
+}
     
+
+class AgentClass:
+    def __init__(self, role, llm_config):
+        self.group_chat = GroupChat(agents=[], messages=[])
+        self.understanding_agent = UnderstandingAgent(name="Understanding Agent")
+        self.task_master = TaskMaster(name="Task Master")
+        self.main_safety_agent = MainSafetyAgent(name="Main Safety Agent")
+        self.role = role
+        self.llm_config = llm_config
+        self.agent_creator = Agent(name="Agent Creator")
+        agent = Agent()
+        self.digital_twin = DigitalTwinAgent(agent)  # Create the Digital Twin
+
+
+    class GeneralManager(UserProxyAgent):
+        class GeneralManager(Agent):
+            def __init__(self, name, role, llm_config=None):
+                if llm_config is None:
+                    llm_config = {}
+                super().__init__(task="...", name=name)
+                self.group_chat_manager = GroupChatManager(agents=[], messages=[], groupchat=GroupChat())
+                self.group_chat = GroupChat(agents=[], messages=[])
+                self.understanding_agent = UnderstandingAgent(name="Understanding Agent")
+                self.task_master = TaskMaster(name="Task Master")
+                self.main_safety_agent = MainSafetyAgent(name="Main Safety Agent")
+                self.role = role
+                self.llm_config = llm_config
+                self.agent_creator = Agent(task="...", name="Agent Creator")
+                self.digital_twin = DigitalTwinAgent()  # Create the Digital Twin
+                """
+                Initializes a new instance of the class.
+
+                Args:
+                    name (str): The name of the instance.
+                    role (str): The role of the instance.
+                    llm_config (config): The configuration for the instance.
+
+                Returns:
+                    None
+                """
+                super().__init__(task="...", name=name)
+                self.group_chat_manager = GroupChatManager(agents=[], messages=[], groupchat=GroupChat())
+                self.group_chat = GroupChat(agents=[], messages=[])
+                self.understanding_agent = UnderstandingAgent(name="Understanding Agent")
+                self.task_master = TaskMaster(name="Task Master")
+                self.main_safety_agent = MainSafetyAgent(name="Main Safety Agent")
+                self.role = role
+                self.llm_config = llm_config
+                self.agent_creator = Agent(task="...", name="Agent Creator")
+                self.digital_twin = DigitalTwinAgent()  # Create the Digital Twin
+
+        def monitor_safety(self, script):
+            """
+            Monitor the safety of a script.
+
+            Args:
+                script (str): The script to be monitored.
+
+            Returns:
+                str: If the script contains the string "unsafe", it returns an alert message.
+                        If the script is safe, it returns the string "Script is safe".
+            """
+            if "unsafe" in script:
+                alert = self.main_safety_agent.handle_message("Safety breach detected!")
+                try:
+                    self.digital_twin.log_unsafe_script(script)  # Log the unsafe script with the Digital Twin
+                except AttributeError:
+                    pass
+                return alert
+            return "Script is safe"
+
+        def handle_user_message(self, message):
+            """
+            Handle the incoming message.
+
+            Args:
+                message (str): The message to be handled.
+
+            Returns:
+                str: The response generated by the understanding agent.
+            """
+            try:
+                response = self.understanding_agent.handle_message(message)
+            except Exception as e:
+                error_response = self.task_master.handle_message(str(e))
+                try:
+                    self.digital_twin.log_error(str(e))  # Log the error with the Digital Twin
+                except AttributeError:
+                    pass
+                return error_response
+            return response
+            
+        def handle_message(self, message):
+            """
+            Handles a message by passing it to the understanding agent and returning the response.
+
+            Parameters:
+                message (str): The message to be handled.
+
+            Returns:
+                str: The response generated by the understanding agent.
+                dict: The error response if an exception occurs.
+            """
+            try:
+                response = self.understanding_agent.handle_message(message)
+            except Exception as e:
+                error_response = self.task_master.handle_message(str(e))
+                self.digital_twin.log_error(str(e))  # Log the error with the Digital Twin
+                return error_response
+            return response
+
+        def monitor_safety(self, script):
+            if "unsafe" in script:
+                alert = self.main_safety_agent.handle_message("Safety breach detected!")
+                self.digital_twin.log_unsafe_script(script)  # Log the unsafe script with the Digital Twin
+                return alert
+            return "Script is safe"
+            if "unsafe" in script:
+                self.digital_twin.log_unsafe_script(script)  # Log the unsafe script with the Digital Twin
+            return "Script is safe"
+
+        def manage_conversation(self, user_input):
+            """
+            Manage the conversation based on user input.
+            
+            Args:
+                user_input (str): The user input.
+            
+            Returns:
+                str: The response to the user input.
+            """
+            response = self.handle_message(user_input)
+            return response
+        
+        def start_chat(self, user_input):
+            """
+            Start a chat with the user.
+            
+            Args:
+                user_input (str): The user input.
+            
+            Returns:
+                str: The response to the user input.
+            """
+            response = self.handle_message(user_input)
+            return response
+        
+        def create_agent(self, agent_name):
+            """
+            Create an agent with the given name.
+            
+            Args:
+                agent_name (str): The name of the agent to create.
+            
+            Returns:
+                Agent: The created agent.
+            """
+            agent = self.agent_creator.create_agent(agent_name)
+            self.group_chat_manager.add_agent(agent)
+            return agent
+class GeneralManager(UserProxyAgent):
+    class GeneralManager(Agent):
+        def __init__(self, name, role, llm_config=config):
+            super().__init__(task="...", name=name)
+            self.group_chat_manager = GroupChatManager(agents=[], messages=[], groupchat=GroupChat())
+            self.group_chat = GroupChat(agents=[], messages=[])
+            self.understanding_agent = UnderstandingAgent(name="Understanding Agent")
+            self.task_master = TaskMaster(name="Task Master")
+            self.main_safety_agent = MainSafetyAgent(name="Main Safety Agent")
+            self.role = role
+            self.llm_config = llm_config
+            self.agent_creator = Agent(task="...", name="Agent Creator")
+            
+        def handle_message(self, message):
+            try:
+                response = self.understanding_agent.handle_message(message)
+            except Exception as e:
+                error_response = self.task_master.handle_message(str(e))
+                return error_response
+            return response
+
     def monitor_safety(self, script):
-        # Safety monitoring can be done here.
-        # For the sake of simplicity, let's assume any script that contains the word "unsafe" is flagged.
         if "unsafe" in script:
             alert = self.main_safety_agent.handle_message("Safety breach detected!")
             return alert
         return "Script is safe"
 
-    def create_agent(self, task):
+    def manage_conversation(self, user_input):
         """
-        Create an agent and a digital twin agent for the given task.
+        Manage the conversation based on user input.
         
         Args:
-            task (str): The task for the agent.
+            user_input (str): The user input.
         
         Returns:
-            tuple: A tuple containing the agent and the digital twin agent.
+            str: The response to the user input.
         """
-        agent = Agent(task)
-        digital_twin = DigitalTwinAgent(agent)
-        return agent, digital_twin
+        response = self.handle_message(user_input)
+        return response
     
-
-
-class Agent:
-    def __init__(self, task):
+    def start_chat(self, user_input):
         """
-        Initialize an Agent instance.
+        Start a chat with the user.
         
         Args:
-            task (str): The task for the agent.
+            user_input (str): The user input.
+        
+        Returns:
+            str: The response to the user input.
         """
-        self.task = task
+        response = self.handle_message(user_input)
+        return response
+    
+    def create_agent(self, agent_name):
+        """
+        Create an agent with the specified name.
+        
+        Args:
+            agent_name (str): The name of the agent to create.
+            params (dict, optional): Additional parameters for the agent. Defaults to gbts.
+            func (function, optional): The function to use for the agent. Defaults to None.
+            task (str, optional): The task for the agent. Defaults to None.
+            groupchat (GroupChat, optional): The group chat for the agent. Defaults to None.
+        Returns:
+            Agent: The created agent.
+        """
+        agent = Agent(name=agent_name)
+
+
+        return agent
+    # Additional methods like create_agent, manage_conversation, etc.
+class Agent:
+    def __init__(self, name):
+        self.name = name
+        # Initialize other necessary attributes
+
     
     def handle_task(self, user_input):
         """
@@ -214,61 +404,122 @@ class PictoryAgent:
         response = "Pictory agent received your input."
         return response
 
-class UnderstandingAgent(autogen.Agent):
+class UnderstandingAgent(AssistantAgent):
     def __init__(self, name):
         super().__init__(name=name)
-        # Initialize sub-agents
+        # Initialize the sub-agents for multiple responses to the eco-bots questions
         self.what_agent = WhatAgent(name="What Agent")
         self.how_agent = HowAgent(name="How Agent")
         self.why_agent = WhyAgent(name="Why Agent")
-        
-    def handle_message(self, message):
-        # Logic to determine which sub-agent to send the message to
-        if "what" in message.lower():
-            return self.what_agent.handle_message(message)
-        elif "how" in message.lower():
-            return self.how_agent.handle_message(message)
-        elif "why" in message.lower():
-            return self.why_agent.handle_message(message)
-        else:
-            # Default behavior or error handling
-            return f"Don't understand the message: {message}"
 
-class WhatAgent(autogen.Agent):
-    def handle_message(self, message):
-        # Logic for handling "what" related queries
-        return f"Handling 'What' query: {message}"
+        def WhatAgent(self, name):
+            self.name = name
+            self.handle_message.__annotations__ = {"message": str}
+            self.prompt = "What is the [message]about?"
+            self.response = "The [message] is about..."
+            self.extract_prompt.__annotations__ = {"message": str}
+            self.expand_prompt.__annotations__ = {"prompt": str}
 
-class HowAgent(autogen.Agent):
-    def handle_message(self, message):
-        # Logic for handling "how" related queries
-        return f"Handling 'How' query: {message}"
+        def HowAgent(self, name):
+            self.name = name
+            self.handle_message.__annotations__ = {"message": str}
+            self.prompt = "How does the [message] work?"
+            self.response = "The [message] works by..."
+            self.extract_prompt.__annotations__ = {"message": str}
+            self.expand_prompt.__annotations__ = {"prompt": str}
 
-class WhyAgent(autogen.Agent):
+        def WhyAgent(self, name):
+            self.name = name
+            self.handle_message.__annotations__ = {"message": str}
+            self.prompt = "Why is the [message] important?"
+            self.response = "The [message] is important because..."
+            self.extract_prompt.__annotations__ = {"message": str}
+            self.expand_prompt.__annotations__ = {"prompt": str}
+
     def handle_message(self, message):
-        # Logic for handling "why" related queries
-        return f"Handling 'Why' query: {message}"
-class TaskMaster(autogen.Agent):
+        # Extract keywords or sentences to form the initial prompt
+        initial_prompt = self.extract_prompt(message)
+        root_node = PromptTreeNode(initial_prompt)
+
+        # Let each sub-agent expand on the prompt
+        what_node = self.what_agent.expand_prompt(initial_prompt)
+        how_node = self.how_agent.expand_prompt(initial_prompt)
+        why_node = self.why_agent.expand_prompt(initial_prompt)
+
+        # Add the expanded prompts as children of the root node
+        root_node.add_child(what_node)
+        root_node.add_child(how_node)
+        root_node.add_child(why_node)
+
+
+        # The root_node now represents the full prompt structure
+        # This can be passed to a visualization function to create interactive D3 nodes
+        self.visualize_prompt_tree(root_node)
+
+    def initiate_chat(self):
+        """
+        Start a conversation with the EcoBot.
+
+        Returns:
+            str: The welcome message.
+        """
+        return "Welcome to EcoBot! How can I assist you today?"
+
+        # Return the combined response or the visualization
+        return root_node
+
+    def extract_prompt(self, message):
+        # Logic to extract the initial prompt from the message
+        return "Extracted prompt"
+
+    def visualize_prompt_tree(self, prompt_tree_node):
+        # Logic to visualize the prompt tree using D3.js
+        pass
+class TaskMaster(AssistantAgent):
     def handle_message(self, message):
         # Here, tasks can be managed, delegated, or processed.
         # For the sake of simplicity, let's just return the message.
         return f"Task received: {message}"
 
-class SafetyAgent(autogen.Agent):
+class MainSafetyAgent(AssistantAgent):
+    def __init__(self, name):
+        super().__init__(name=name)
+        # Initialize any necessary attributes
+
+    def handle_message(self, message):
+        # Handle safety-related messages.
+        # Read safety agent reports and advise
+        report = self.read_safety_agent_reports()
+        advice = self.process_reports(report)
+        return f"Alert: {message}\nAdvice: {advice}"
+
+    def read_safety_agent_reports(self):
+        # Placeholder logic to read safety agent reports
+        return "Safety agent reports"
+    
+    def process_reports(self, report):
+        # Placeholder logic to process safety agent reports
+        return "Safety agent advice"
+
+
+class SafetyAgent(Agent):
     def handle_message(self, message):
         # Handle safety-related messages.
         return f"Alert: {message}"
-class TaskMaker(autogen.Agent):
+class TaskMaker(Agent):
     def __init__(self, name):
         super().__init__(name=name)
+        self.task = "..."
+        self.task_delegator = TaskDelegator(name="Task Delegator")
         # You can initialize other attributes if necessary
 
     def formulate_task(self, message):
         # Based on the message or other criteria, create a task.
         # This is a simplified representation; real-world scenarios would require more complex logic.
-        task = f"Formulated Task: {message}"
-        return task
-class TaskDelegator(autogen.Agent):
+        task_response = f"Formulated Task: {message}"
+        return task_response
+    
+class TaskDelegator(Agent):
     def __init__(self, name, worker_agents):
         super().__init__(name=name)
         self.worker_agents = worker_agents  # A list or dictionary of worker agents
@@ -283,13 +534,7 @@ class TaskDelegator(autogen.Agent):
         
         response = worker_agent.handle_message(task)
         return response
-worker_agents = [WorkerAgent(name=f"Worker Agent {chr(i)}") for i in range(65, 72)]  # A, B, C, ... G
-task_maker = TaskMaker(name="Task Maker")
-task_delegator = TaskDelegator(name="Task Delegator", worker_agents=worker_agents)
 
-# Example usage:
-task = task_maker.formulate_task("Analyze dataset X")
-response = task_delegator.delegate_task(task)
 
 class WorkerAgent(autogen.Agent):
     def __init__(self, name, speciality=None):
@@ -308,15 +553,40 @@ class WorkerAgent(autogen.Agent):
 
     # You can add more methods specific to the tasks the worker agents might perform.
 
-class EcoBot(autogen.Agent):
+class EcoBot(UserProxyAgent):
     def __init__(self, name):
         super().__init__(name=name)
-        # Initialize the Understanding Agent
-        self.understanding_agent = UnderstandingAgent(name="Understanding Agent")
+        # Initialize the groupchat Agents
+        self.gma_agent = GeneralManager(name="General Manager Agent")
+        self.safety_agent = MainSafetyAgent(name="Main Safety Agent")
+        self.task_maker = TaskMaker(name="Task Maker")
+        self.task_delegator = TaskDelegator(name="Task Delegator")
+        self.worker_agents = [WorkerAgent(name=f"Worker Agent {chr(i)}") for i in range(65, 72)]
         
     def handle_message(self, message):
         # Forward the message to the Understanding Agent for processing
-        response = self.understanding_agent.handle_message(message)
+        response = self.gma_agent.handle_message(message)
+        # Check if the message contains a safety alert
+        if "alert" in message:
+            # If so, forward the message to the Main Safety Agent
+            response = self.safety_agent.handle_message(message)
+        # Check if the message contains a task
+        # For simplicity, we'll assume that the message contains a task if it contains the word "task"
+        # In real-world applications, you'd use more sophisticated logic to detect tasks.
+        # For example, you could use a task detection model or a keyword-based approach.
+        # You could also use a combination of approaches.
+        # For example, you could use a task detection model to detect tasks and then use a keyword-based approach to detect keywords in the task.
+        # ...
+        # If the message contains a task, forward the message to the Task Maker
+        # The Task Maker will formulate a task based on the message
+        # The Task Maker will then forward the task to the Task Delegator
+        # The Task Delegator will delegate the task to a worker agent
+        # The worker agent will handle the task
+        # ...
+        if "task" in message:
+            task = self.task_maker.formulate_task(message)
+            response = self.task_delegator.delegate_task(task)
+        # Return the response
         return response
 
     def initiate_chat(self, message):
@@ -329,3 +599,12 @@ class EcoBot(autogen.Agent):
                 break
             response = self.handle_message(user_input)
             print(f"Eco-Bot: {response}")
+
+
+worker_agents = [WorkerAgent(name=f"Worker Agent {chr(i)}") for i in range(65, 72)]  # A, B, C, ... G
+task_maker = TaskMaker(name="Task Maker")
+task_delegator = TaskDelegator(name="Task Delegator", worker_agents=worker_agents)
+
+# Example usage:
+task = task_maker.formulate_task("Analyze dataset X")
+response = task_delegator.delegate_task(task)
