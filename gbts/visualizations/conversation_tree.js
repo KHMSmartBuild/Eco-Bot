@@ -1,66 +1,83 @@
 // Import Three.js and controls
-import * as THREE from '../node_modules/three/build/three';
-import { OrbitControls } from '../node_modules/three/examples/jsm/controls/OrbitControls';
+import * as THREE from 'three';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+
+// Get the container element
+const container = document.getElementById('treeContainer');
+
 // Setup the Three.js scene, camera, and renderer
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
 const renderer = new THREE.WebGLRenderer();
-renderer.setSize(window.innerWidth, window.innerHeight);
-document.body.appendChild(renderer.domElement);
+renderer.setSize(1, 1);
+container.appendChild(renderer.domElement); // Append to the container instead of body
 
 // Add orbit controls for camera manipulation
 const controls = new OrbitControls(camera, renderer.domElement);
-const container = document.getElementById('treeContainer');
+controls.enableDamping = true; // an animation loop is required when either damping or auto-rotation are enabled
+controls.dampingFactor = 0.25;
 
-// Adjust camera and renderer setup to use the container's dimensions
-camera.aspect = container.clientWidth / container.clientHeight;
-camera.updateProjectionMatrix();
-renderer.setSize(container.clientWidth, container.clientHeight);
-container.appendChild(renderer.domElement); // Append to the container instead of body
+// Initialize the camera position
+camera.position.z = 30;
 
-// Create your Three.js visual elements here (e.g., tree branches, leaves, etc.)
-// ...
-// Create your Three.js visual elements here (e.g., tree branches, leaves, etc.)
-// Example: Create a tree with branches and leaves
-const trunkGeometry = new THREE.CylinderGeometry(0.5, 0.5, 10);
-const trunkMaterial = new THREE.MeshBasicMaterial({ color: 0x8B4513 });
-const trunk = new THREE.Mesh(trunkGeometry, trunkMaterial);
-scene.add(trunk);
+// Add lights to the scene
+const ambientLight = new THREE.AmbientLight(0x404040); // soft white light
+scene.add(ambientLight);
 
-const branchGeometry = new THREE.CylinderGeometry(0.2, 0.2, 5);
-const branchMaterial = new THREE.MeshBasicMaterial({ color: 0x228B22 });
-const branch1 = new THREE.Mesh(branchGeometry, branchMaterial);
-branch1.position.set(0, 7, 0);
-scene.add(branch1);
+// Function to create the tree elements
+function createTree() {
+    // Trunk
+    const trunkGeometry = new THREE.CylinderGeometry(0.5, 0.5, 10);
+    const trunkMaterial = new THREE.MeshStandardMaterial({ color: 0x8B4513 });
+    const trunk = new THREE.Mesh(trunkGeometry, trunkMaterial);
+    scene.add(trunk);
 
-const branch2 = new THREE.Mesh(branchGeometry, branchMaterial);
-branch2.position.set(0, 7, 2);
-scene.add(branch2);
+    // Branches
+    const branchGeometry = new THREE.CylinderGeometry(0.1, 0.1, 5);
+    const branchMaterial = new THREE.MeshStandardMaterial({ color: 0x228B22 });
 
-const leafGeometry = new THREE.SphereGeometry(1);
-const leafMaterial = new THREE.MeshBasicMaterial({ color: 0x00FF00 });
-const leaf1 = new THREE.Mesh(leafGeometry, leafMaterial);
-leaf1.position.set(0, 10, 0);
-scene.add(leaf1);
+    const branch1 = new THREE.Mesh(branchGeometry, branchMaterial);
+    branch1.position.set(2, 5, 0);
+    scene.add(branch1);
 
-const leaf2 = new THREE.Mesh(leafGeometry, leafMaterial);
-leaf2.position.set(0, 10, 2);
-scene.add(leaf2);
+    const branch2 = new THREE.Mesh(branchGeometry, branchMaterial);
+    branch2.position.set(-2, 5, 0);
+    scene.add(branch2);
+
+    // Leaves
+    const leafGeometry = new THREE.SphereGeometry(0.5);
+    const leafMaterial = new THREE.MeshStandardMaterial({ color: 0x00FF00 });
+
+    const leaf1 = new THREE.Mesh(leafGeometry, leafMaterial);
+    leaf1.position.set(2, 8, 0);
+    scene.add(leaf1);
+
+    const leaf2 = new THREE.Mesh(leafGeometry, leafMaterial);
+    leaf2.position.set(-2, 8, 0);
+    scene.add(leaf2);
+}
+
+// Call createTree to add the tree to the scene
+createTree();
 
 // Animation loop for rendering the Three.js scene
 function animate() {
     requestAnimationFrame(animate);
-    controls.update(); // Only required if controls.enableDamping = true, or if controls.autoRotate = true
+    controls.update();
     renderer.render(scene, camera);
+    onWindowResize(); // Call onWindowResize to update camera and renderer on window resize
 }
-// Update resizing listener to adjust to the container's dimensions
-window.addEventListener('resize', () => {
-    camera.aspect = container.clientWidth / container.clientHeight;
+
+// Resize Listener
+function onWindowResize() {
+    const aspectRatio = container.clientWidth > 0 ? container.clientWidth / container.clientHeight : 1;
+    camera.aspect = aspectRatio;
     camera.updateProjectionMatrix();
     renderer.setSize(container.clientWidth, container.clientHeight);
-});
+}
 
-// Call the animate function to start the rendering loop
+// Add the resize event listener
+window.addEventListener('resize', onWindowResize, false);
+
+// Start the animation loop
 animate();
-
-export { animate };

@@ -117,3 +117,77 @@ svg {
         height: auto; /* Adjust height automatically */
     }
 }
+/* Define color variables for easy theme management */
+:root {
+    --background-color: #F5F7F9;
+    --text-color: #333;
+    --header-bg-color: #4CAF50;
+    --header-text-color: white;
+    --main-content-bg-color: white;
+    --link-stroke: #999;
+    --button-fill: #4CAF50;
+    --button-hover-fill: #45a049;
+    --tooltip-bg-color: white;
+    --tooltip-border-color: #ddd;
+}
+
+body {
+    background-color: var(--background-color);
+    font-family: 'Arial', sans-serif;
+    color: var(--text-color);
+}
+
+/* ... rest of your styles ... */
+
+/* Responsive font sizes */
+html {
+    font-size: 100%; /* default to 16px */
+}
+
+@media (max-width: 600px) {
+    html {
+        font-size: 90%;
+    }
+}
+
+/* Interactive elements focus state */
+.button,
+.eco-bot-node {
+    outline: none; /* Remove default outline */
+}
+
+.button:focus,
+.eco-bot-node:focus,
+.button:hover,
+.eco-bot-node:hover {
+    fill: var(--button-hover-fill);
+}
+
+/* Dark Mode */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --background-color: #1a1a1a;
+        --text-color: #f5f5f5;
+        --header-bg-color: #333;
+        --header-text-color: #f5f5f5;
+        --main-content-bg-color: #2a2a2a;
+        --link-stroke: #aaa;
+        --button-fill: #333;
+        --button-hover-fill: #444;
+        --tooltip-bg-color: #2a2a2a;
+        --tooltip-border-color: #444;
+    }
+
+    /* Ensure the colors are updated for dark mode */
+    body {
+        background-color: var(--background-color);
+        color: var(--text-color);
+    }
+
+    header {
+        background-color: var(--header-bg-color);
+        color: var(--header-text-color);
+    }
+
+    /* ... rest of the dark mode styles ... */
+}

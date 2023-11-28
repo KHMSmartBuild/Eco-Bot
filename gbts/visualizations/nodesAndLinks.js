@@ -1,7 +1,7 @@
 // Import D3
 import * as d3 from 'd3';
 
-// Define a color scale for node groups if not yet defined
+// Define a color scale for node groups
 const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
 
 function createNodes(svg, nodes) {
@@ -18,26 +18,25 @@ function createNodes(svg, nodes) {
         .attr('r', 5)
         .attr('fill', d => colorScale(d.group));
 
-    // Append labels to each group
+    // Append interactive labels to each group
     nodeEnter.append('text')
         .text(d => d.id)
         .attr('x', 12)
-        .attr('dy', '.35em');
+        .attr('dy', '.35em')
+        .style('display', 'none');
+
+    nodeEnter.on('mouseover', function() {
+        d3.select(this).select('text').style('display', null);
+    })
+    .on('mouseout', function() {
+        d3.select(this).select('text').style('display', 'none');
+    });
 
     return nodeEnter;
 }
 
 function createLinks(svg, links) {
-    // For straight links:
-    // const linkEnter = svg.append("g")
-    //     .attr("class", "links")
-    //     .selectAll("line")
-    //     .data(links)
-    //     .join("line")
-    //     .attr("stroke", "#999")
-    //     .attr("stroke-opacity", 0.6);
-
-    // For curved links:
+    // For curved links
     const linkEnter = svg.append("g")
         .attr("class", "links")
         .selectAll("path")
@@ -45,20 +44,19 @@ function createLinks(svg, links) {
         .join("path")
         .attr("stroke", "#999")
         .attr("stroke-opacity", 0.6)
-        .attr('d', d => {
-            // Placeholder values, you will need to replace these with actual coordinates
-            const sourceX = d.source.x;
-            const sourceY = d.source.y;
-            const targetX = d.target.x;
-            const targetY = d.target.y;
-            // Define the control point for the curve
-            const controlX = (sourceX + targetX) / 2;
-            const controlY = (sourceY + targetY) / 2 - 50; // Adjust the -50 to set the height of the curve
-            return `M${sourceX},${sourceY} Q${controlX},${controlY} ${targetX},${targetY}`;
-        });
+        .attr("fill", "none")
+        .attr("marker-end", "url(#arrow)"); // Add this line for arrowheads
+
+    // Define the path for each link
+    linkEnter.attr('d', d => {
+        const dx = d.target.x - d.source.x,
+              dy = d.target.y - d.source.y,
+              dr = Math.sqrt(dx * dx + dy * dy);
+        return `M${d.source.x},${d.source.y}A${dr},${dr} 0 0,1 ${d.target.x},${d.target.y}`;
+    });
 
     return linkEnter;
 }
 
-// Export the functions so they can be used in the main visualization script
-export { createNodes, createLinks};
+// Export the functions
+export { createNodes, createLinks };

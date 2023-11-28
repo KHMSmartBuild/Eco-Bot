@@ -1,25 +1,33 @@
-// Importing the necessary module for YAML parsing
-const yaml = require('js-yaml');
-const fs = require('fs');
+// prepare the data from the conversation between the user and the bot
+// ensure that the data is in the correct format for the visualization
+// add the data to the seed data script formatted for the visualization
 
-// Sample function to convert YAML to JSON
-const convertYAMLtoJSON = (yamlFilePath) => {
-    try {
-        // Read the YAML file
-        const fileContents = fs.readFileSync(yamlFilePath, 'utf8');
-        
-        // Convert YAML to JSON
-        const jsonData = yaml.load(fileContents);
+// This is a placeholder for your raw conversation data
+let rawConversationData = [
+    { sender: 'user', content: 'Hello, bot!' },
+    { sender: 'bot', content: 'Hello, user!' },
+    // ...
+];
 
-        // Structure the data for D3.js (if needed)
-        // For example, you might want to create an array of nodes and an array of links
-        // ...
+// This is a placeholder for your seed data
+let seedData = [];
 
-        return jsonData;
-    } catch (e) {
-        console.error("Error in converting YAML to JSON:", e);
-        return null;
-    }
-};
+function prepareData(rawData) {
+    // Parse the raw data
+    let parsedData = rawData.map(message => {
+        return {
+            sender: message.sender,
+            content: message.content,
+            // Add any other fields you need for your visualization
+        };
+    });
 
-module.exports = convertYAMLtoJSON;
+    // Add the parsed data to the seed data
+    seedData = seedData.concat(parsedData);
+}
+
+// Call the function to prepare the data
+prepareData(rawConversationData);
+
+console.log(seedData);
+

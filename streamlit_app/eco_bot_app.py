@@ -1,9 +1,12 @@
 """
 ECO-BOT Landing page
-This is a simple Eco-Bot chat bot that uses OpenAI's GPT-4 model to generate responses to user input.
+This is a simple Eco-Bot chat bot that uses OpenAI's GPT-4 model
+to generate responses to user input.
 """
 import os
 import sys
+sys.path.append("..")
+from eco_buddies.eco_bot_chat import EcoBot
 import datetime
 import logging
 import openai
@@ -11,8 +14,7 @@ import streamlit as st
 import streamlit.components.v1 as components
 from icecream import ic
 from dotenv import load_dotenv
-sys.path.append("..")
-from eco_buddies.eco_bot_chat import EcoBot
+
 
 
 
@@ -154,16 +156,16 @@ with st.container():
             st.write(milestone['date'])
 
         if index < st.session_state.milestone:
-            st.success(f"✅ Completed")
+            st.success("✅ Completed")
         else:
-            st.warning(f"🔜 Upcoming")
+            st.warning("🔜 Upcoming")
 
-    # Button to advance milestones
-    if st.button("Advance to Next Milestone"):
-        if st.session_state.milestone < len(milestones) - 1:
-            st.session_state.milestone += 1
-        else:
-            st.session_state.milestone = 0  # Reset after the last milestone
+        # Button to advance milestones
+        if st.button("Advance to Next Milestone", key="advance_milestone(1,2,3,4)"):
+            if st.session_state.milestone < len(milestones) - 1:
+                st.session_state.milestone += 1
+            else:
+                st.session_state.milestone = 0  # Reset after the last milestone
 
 # Crowdfunding Section in a Container
 with st.container():
@@ -171,7 +173,7 @@ with st.container():
     st.write("""
     Join our mission and support the development of Eco-Bot. Every contribution brings us closer to our goal.
     """)
-    st.button("Donate Now")
+    st.button("Donate Now",key="donate_now")
 
 # Footer
 st.write("---")

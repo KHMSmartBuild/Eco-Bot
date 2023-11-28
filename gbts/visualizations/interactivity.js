@@ -3,21 +3,26 @@
 // Import D3 modules
 import * as d3 from 'd3';
 
-// Function to add drag behavior to nodes
+// Singleton tooltip
+const tooltip = d3.select("body").append("div")
+    .attr("class", "tooltip")
+    .style("opacity", 0);
+
 function addDrag(simulation) {
-    function dragstarted(d) {
-        if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+    // Updated for D3 v6 event handling
+    function dragstarted(event, d) {
+        if (!event.active) simulation.alphaTarget(0.3).restart();
         d.fx = d.x;
         d.fy = d.y;
     }
 
-    function dragged(d) {
-        d.fx = d3.event.x;
-        d.fy = d3.event.y;
+    function dragged(event, d) {
+        d.fx = event.x;
+        d.fy = event.y;
     }
 
-    function dragended(d) {
-        if (!d3.event.active) simulation.alphaTarget(0);
+    function dragended(event, d) {
+        if (!event.active) simulation.alphaTarget(0);
         d.fx = null;
         d.fy = null;
     }
@@ -28,86 +33,49 @@ function addDrag(simulation) {
         .on("end", dragended);
 }
 
-// Function to add tooltips to nodes
 function addToolTips(node) {
-    const tooltip = d3.select("body").append("div")
-        .attr("class", "tooltip")
-        .style("opacity", 0);
-
-    node.on("mouseover", function(d) {
+    // Reuse the singleton tooltip for all nodes
+    node.on("mouseover", (event, d) => {
         tooltip.transition()
             .duration(200)
-            .style("opacity", .9);
+            .style("opacity", 0.9);
         tooltip.html(d.id)
-            .style("left", (d3.event.pageX + 5) + "px")
-            .style("top", (d3.event.pageY - 28) + "px");
+            .style("left", (event.pageX + 15) + "px")
+            .style("top", (event.pageY - 35) + "px");
     })
-    .on("mouseout", function(d) {
+    .on("mouseout", (event, d) => {
         tooltip.transition()
             .duration(500)
             .style("opacity", 0);
     });
 }
 
-
 function handleMouseOver(event, d) {
-    // Update for D3 v6 event handling
-    tooltip.transition()
-        .duration(200)
-        .style("opacity", .9);
-    tooltip.html(d.id)
-        .style("left", (event.pageX + 5) + "px")
-        .style("top", (event.pageY - 28) + "px");
-
-    // Change style
-    d3.select(this)
-        .style("fill", "red");
+    // Add hover styling or logic here
+    d3.select(this).classed('node-hover', true);
 }
-
 
 function handleMouseOut(event, d) {
-    // Reset any styles set on mouseover
-    tooltip.transition()
-        .duration(500)
-        .style("opacity", 0);
-    d3.select(this)
-        .style("fill", null);
+    // Reset hover styling or logic here
+    d3.select(this).classed('node-hover', false);
 }
 
-
-function handleClick(d) {
+function handleClick(event, d) {
     // Implement click behavior, like expanding a node, or showing more information
+    // For example, toggle node size on click
+    const isLarge = d3.select(this).classed('node-large');
     d3.select(this)
+        .classed('node-large', !isLarge)
+        .attr('r', !isLarge ? 10 : 5); // Toggle radius size
+}
+
+function showGBTS() {
+    // Implement logic to highlight GBTS nodes
+    d3.selectAll(".node")
         .transition()
         .duration(500)
-        .attr("r", 10); // Increase the radius of the node
-
-    // Example: Show more information in a tooltip
-    const tooltip = d3.select("body").append("div")
-        .attr("class", "tooltip")
-        .style("opacity", 0);
-
-    tooltip.transition()
-        .duration(200)
-        .style("opacity", .9);
-    tooltip.html("Additional information")
-        .style("left", (d3.event.pageX + 5) + "px")
-        .style("top", (d3.event.pageY - 28) + "px");
-    }
-
-    // add functions for main script to use
-    // add show gbts function this highlights the nodes from the gbts initialization
-function showGBTS() {
-    d3.selectAll("circle")
-        .style("fill", function(d) {
-            if (d.group == 1) {
-                return "red";
-            } else {
-                return "black";
-            }
-        });
-    }
-
+        .style("fill", d => d.group === 1 ? "red" : "black");
+}
 
 // Export the functions
 export { addDrag, addToolTips, handleMouseOver, handleMouseOut, handleClick, showGBTS };
