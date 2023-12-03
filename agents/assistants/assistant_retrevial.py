@@ -16,6 +16,12 @@ openai.api_key = OPENAI_API_KEY
 openai.organization = ORGANIZATION_ID
 
 def list_assistants():
+    """
+    Return a list of all the available assistants.
+
+    Returns:
+        list: A list of assistant objects.
+    """
 
     assistant_object = openai.beta.assistants.list()
     return assistant_object
@@ -24,6 +30,43 @@ HEADERS = {
     "Authorization": f"Bearer {OPENAI_API_KEY}",
     "Content-Type": "application/json"
 }
+
+def retrieve_assistants_by_name(name):
+    """
+    Retrieves a list of assistant objects that match the provided name.
+
+    Parameters:
+        openai_client: The OpenAI client object.
+        name (str): The name of the assistant(s) to retrieve.
+
+    Returns:
+        list: A list of assistant objects that match the provided name.
+    """
+    try:
+        # Fetch all assistants
+        response = openai.beta.assistants.list()
+        assistants = response.get('data', [])
+
+        # Filter assistants by name
+        matching_assistants = [assistant for assistant in assistants if assistant['name'] == name]
+        return matching_assistants
+    except Exception as e:
+        print(f"Error retrieving assistants by name: {e}")
+        return []
+
+
+def get_assistant_names():
+    """
+    Return a list of all the available assistant names.
+
+    Returns:
+        list: A list of assistant names.
+    """
+    assistant_object = openai.beta.assistants.list().data
+    assistant_names = []
+    for assistant in assistant_object:
+        assistant_names.append(assistant.name)
+    return assistant_names
 
 def delete_assistant(assistant_id):
     """Delete an assistant by ID."""
@@ -40,8 +83,8 @@ def delete_all_assistants():
     """Delete all assistants."""
     a_list = list_assistants()
     assitant_obj_list = a_list.data
-    for i in range(len(assitant_obj_list)):
-        delete_assistant(assitant_obj_list[i].id)
+    for assistant in enumerate(assitant_obj_list):
+        delete_assistant(assistant[1].id)
 
 def select_assistant(assistant_id):
     """
@@ -102,5 +145,3 @@ def create_thread():
     """
     thread = openai.beta.threads.create()
     return thread
-
-

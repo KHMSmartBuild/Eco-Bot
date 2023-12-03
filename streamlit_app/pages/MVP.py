@@ -83,11 +83,22 @@ def main():
         Welcome to the Eco-Bot Group Chat. Each Eco-Bot represents a member of the conversation.
         Interact with each bot and they will respond in their respective text boxes.
         """)
-        # Dropdown for selecting an agent
-        with st.sidebar:
-            agent_list = ["Agent 1", "Agent 2", "Agent 3", "Agent 4"]
-            selected_agent = st.selectbox("Select an Agent to Add to Chat", agent_list)
-
+        # Dropdown for selecting an agent database
+            # Navigation Sidebar
+        st.sidebar.header("Menu")
+        st.sidebar.text("Previous Conversations")
+        # Display previous conversations, perhaps in a selectbox or list
+        st.sidebar.text("Settings")
+        # Settings options/buttons
+        if st.sidebar.button("Help"):
+            # Add your help functionality here
+            st.write("This is the help content.")
+        # Dropdown for selecting an agent database
+        st.sidebar.text("Select an Agent Database")
+        DB_LIST = ["DB 1", "DB 2", "DB 3", "DB 4", "DB 5"]
+        selected_db = st.sidebar.selectbox("Select an Agent Database", DB_LIST)
+        # load agents from selected database agent_list = []
+        agent_list = ["Agent 1", "Agent 2", "Agent 3", "Agent 4", "Agent 5"]
         # Logic to handle the addition of the selected agent to the chat
         # This part depends on how your Autogen integration works
         # ...
@@ -97,31 +108,35 @@ def main():
 
         # Agent 1 in Quadrant 1
         with col1:
+            st.selectbox("Select an Agent to Add to Chat", agent_list, key="agent1")
             st.image("assets/images/eco_buddy1.png", use_column_width=False, width=100)
             agent1_response = st.text_area("Agent 1 Response:", value="", key="agent1_response")
 
         # Agent 2 in Quadrant 2
         with col2:
+            st.selectbox("Select an Agent to Add to Chat", agent_list, key="agent2")
             st.image("assets/images/eco_buddy2.png", use_column_width=False, width=100)
             agent2_response = st.text_area("Agent 2 Response:", value="", key="agent2_response")
 
         # Agent 3 in Quadrant 3
         with col3:
+            st.selectbox("Select an Agent to Add to Chat", agent_list, key="agent3")
             st.image("assets/images/eco_buddy3.png", use_column_width=False, width=100)
             agent3_response = st.text_area("Agent 3 Response:", value="", key="agent3_response")
 
         # Agent 4 in Quadrant 4
         with col4:
+            st.selectbox("Select an Agent to Add to Chat", agent_list, key="agent4")
             st.image("assets/images/eco_buddy4.png", use_column_width=False, width=100)
             agent4_response = st.text_area("Agent 4 Response:", value="", key="agent4_response")
 
         # Input for user message
-        user_message = st.text_input("Your Message:", key="user_message")
+        system_message = st.text_input("System Message:", key="user_message")
 
         # Send button
         if st.button("Send"):
             # Make a request to the AutoGen service with a timeout
-            response = requests.post(AUTOGEN_SERVICE_URL, json={"message": user_message}, timeout=10)
+            response = requests.post(AUTOGEN_SERVICE_URL, json={"message": system_message}, timeout=10)
 
             if response.status_code == 200:
                 # Assuming the service returns a JSON with agent responses
@@ -140,9 +155,7 @@ def main():
             webrtc_streamer(key="example") 
     # Combined Text Area for User & Eco-Bot
     with st.container():
-        # Clear the user input field
-        user_input = st.text_input("Type your message:", value="", key="user_input")
-
+        user_input = st.text_input("Ask Eco-Bot a question:", key="user_input")
         st.expander("Chat with Eco-Bot")
         st.text("Conversation History")
         st.text_area("Chat with Eco-Bot:", value="", key="main_conversation")
@@ -166,27 +179,11 @@ def main():
             # Placeholder for Eco-Bot's response logic
         st.write("Eco-Bot: ...")  # Replace with actual response
 
-    # Navigation Sidebar
-    st.sidebar.header("Menu")
-    st.sidebar.text("Previous Conversations")
-    # Display previous conversations, perhaps in a selectbox or list
-    st.sidebar.text("Settings")
-    # Settings options/buttons
-    st.sidebar.text("Help")
-    # Help options/buttons
-    st.sidebar.header("Menu")
-    st.sidebar.text("Previous Conversations")
-    # Display previous conversations, perhaps in a selectbox or list
-    st.sidebar.text("Settings")
-    # Settings options/buttons
-    if st.sidebar.button("Help"):
-        # Add your help functionality here
-        st.write("This is the help content.")
 
     # Imagery from Pictory agent
-    st.container()
-    with st.text("Imagery"):
-     st.dataframe("Imagery from Pictory agent")
+    #st.container()
+    #with st.text("Imagery"):
+    # st.dataframe("Imagery from Pictory agent")
 
     # TODO: Add imagery from Pictory agent
     # Imagery from Pictory agent
@@ -194,11 +191,7 @@ def main():
     #st.image(imagery_url, caption="Imagery from Pictory agent")
 
     # Key Points - Meeting Minutes from parsing agent with gbts system
-    st.container()
-    with st.text("Key Points - Meeting Minutes"):
-     st.dataframe("Key Points - Meeting Minutes from parsing agent with gbts system")
-    
-
+    st.image("./assets/images/GBTS_Node_tree.png")
     # Key Points - Issues
     # Issues
     st.text("Issues")
@@ -229,15 +222,15 @@ def load_html(filename):
     
 # GBTS Interaction Page
 def d3_node_structure():
-    with open('index.html', 'r', encoding='utf-8') as file:
+    with open('../gbts/visualizations/index.html', 'r', encoding='utf-8') as file:
         html_code = file.read()
     components.html(html_code, height=600)
-def gbts_interaction_page():
+def gbts_interaction_page(GBTS_PROMPTS):
 
     st.container()
     with st.write("Explore the Gaia-Bohm Thought Style (GBTS) interaction here."):
         st.echo()
-        gbts_instance 
+        gbts_instance = GBTS()
     # Example of guiding user through the first prompt
     if 'current_stage' not in st.session_state:
         st.session_state.current_stage = "Seed of Inquiry"
@@ -248,7 +241,7 @@ def gbts_interaction_page():
     if st.button("Next"):
         # Save the user's response in the GBTS tree
         if gbts_instance.root_node is None:
-            gbts_instance.initiate_prompt_tree(user_response)
+            gbts_instance.build_from_conversation(user_response)
         else:
             # Logic to add the response as a new node in the GBTS tree
             pass  # This will be developed further based on how you want the conversation to progress
@@ -258,20 +251,16 @@ def gbts_interaction_page():
             st.session_state.current_stage = "Branches of Understanding"
 
     # Display the current state of the GBTS tree (as a JSON string for now)
-    st.json(gbts_instance.to_json())
+    st.json(gbts_instance.visualize())
     d3_node_structure()
+    # initialize the session state if it doesn't exist
+    if 'chat_history' not in st.session_state:
+        st.session_state.chat_history = ""
 
-#home_page()
-
+    #home_page()
 def home_page():
     """ display the home page """
-    if home_page:
-        st.write("Welcome to Eco-Bot! Let's make eco-friendly choices together.")
-        #with GeneralManagerAgent():
-            #input = st.text_input("Ask Eco-Bot a question:")
-            #if input:
-                #response = EcoBot_Chat.handle_input(input)
-                #st.write(f"Eco-Bot: {response}")
+    st.write("Welcome to the Home Page!")
 # Eco-Buddies Page
 def eco_buddies_page():
         """

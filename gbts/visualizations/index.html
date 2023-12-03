@@ -17,6 +17,8 @@
         <!-- The D3 visualization will be appended here -->
         <section id="treeContainer" class="w-full h-full"> <!-- 'section' for distinct sections, added 'h-full' for full height -->
             <h2 class="text-center text-2xl font-bold">Conversation Tree</h2>
+            <output id="output"></output>
+            <p class="text-center text-lg">Hover over nodes to view GBTS</p>
             <p class="text-center text-lg">Click on a node to view the corresponding GBTS</p>
         </section>
     </main>
@@ -46,7 +48,7 @@
     <footer class="bg-green-500 p-4 text-center text-white text-xl"> <!-- Use 'footer' for footer content -->
         <p>Created by <a href="https://github.com/khmsmartbuild" target="_blank" class="text-blue-500 hover:text-blue-600">KHMSmartBuild</a></p>    
     <!-- Scripts for visualization and interactivity -->
-    <script type="module" src="./conversation_tree.js"></script>
+    <script type="module" src="./conversation_tree.js"></script></output>
     <script type="module" src="./gbtsVisualization.js"></script>
     <link rel="icon" href="path/to/your/favicon.ico" type="image/x-icon">
 

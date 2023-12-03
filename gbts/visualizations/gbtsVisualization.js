@@ -11,7 +11,7 @@
 // gbtsVisualization.js
 
 // Import D3 modules
-import * as d3 from 'd3';
+import * as d3 from '../../node_modules/d3/dist/d3.js';
 // Import necessary modules
 import { createNodes, createLinks } from './nodesAndLinks.js';
 

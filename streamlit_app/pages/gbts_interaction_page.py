@@ -1,6 +1,19 @@
-import streamlit as st
+import sys
+import os
 import json
+import codecs
+import streamlit as st
+import streamlit.components.v1 as components
+sys.path.append("../gbts")
+from gbts.gbts import GBTS, PromptTreeNode
+#from gbts.gaia_assit import GaiaAssistant
 
+#gaia = GaiaAssistant()
+update_gbts = PromptTreeNode(role="...", message="...")
+GBTS = GBTS()
+# Define the gaia_assist function
+#def gaia_assist(self, **kwargs):
+#    self.assistant = gaia(**kwargs)
 # Define the function to load the GBTS JSON content
 def load_gbts_data():
     # Correct the file path according to the actual location of your GBTS.json file
@@ -11,6 +24,15 @@ def load_gbts_data():
 
 # Define your Streamlit app logic using the loaded GBTS data
 def gbts_interaction_page(gbts_data):
+    """
+    Generates a page for interacting with the Gaia-Bohm Thought Style (GBTS).
+
+    Args:
+        gbts_data (dict): A dictionary containing the GBTS data.
+
+    Returns:
+        None
+    """
     st.title("Explore the Gaia-Bohm Thought Style (GBTS) Interaction")
 
     # Initialize the GBTS session state if not already done
@@ -37,7 +59,7 @@ def gbts_interaction_page(gbts_data):
         st.session_state.current_stage = next_stage
 
         # Render the D3 visualization after the user progresses
-        render_d3_visualization('assets/gbtsVisualization.html')
+        render_d3_visualization('../gbts/visualizations/index.html')
 
     # Display the current state of the GBTS tree as JSON
     # Placeholder: replace with actual visual representation of GBTS
@@ -45,11 +67,16 @@ def gbts_interaction_page(gbts_data):
 
 # This function will read and render the D3 visualization HTML in Streamlit
 def render_d3_visualization(file_path):
-    with open(file_path, 'r', encoding='utf-8') as f:
+    with codecs.open(file_path, 'r', 'utf-8') as f:
         html_content = f.read()
-    st.components.v1.html(html_content, height=600)  # You can adjust the height as needed
+    components.html(html_content, height=600)
+    return html_content
+
+    
 
 # Main function to run the Streamlit app
 if __name__ == "__main__":
     gbts_data = load_gbts_data()
     gbts_interaction_page(gbts_data)
+    html_file_path = '../gbts/visualizations/index.html'
+

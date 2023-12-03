@@ -123,7 +123,7 @@ def visualize_conversation_tree(conversation, structure=None):
     tree.visualize()
 
 # Load the JSON structure
-with open("c:/Users/User/OneDrive/Desktop/Buisness/KHM Smart Build/Coding/Projects/OCFS_projects/Eco-Bot/gbts/GBTS.json", "r") as file:
+with open("c:/Users/User/OneDrive/Desktop/Buisness/KHM Smart Build/Coding/Projects/OCFS_projects/Eco-Bot/gbts/GBTS.json", "r", encoding="utf-8") as file:
     prompt_structure = json.load(file)
 
 # Sample usage:

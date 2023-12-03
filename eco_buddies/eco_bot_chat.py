@@ -46,11 +46,11 @@ class EcoBot:
         self.use_azure = os.getenv("USE_AZURE", "False").lower() == "true"
         current_dir = os.path.dirname(os.path.abspath(__file__))
         eco_bot_personality_file = os.path.join(current_dir, "eco_bot_personality.json")
-        with open(eco_bot_personality_file, "r", encoding="utf-8") as file:
-            self.personality = json.load(file)
-        
-        
-    def generate_response(self, user_input: str) -> str:
+        with open(eco_bot_personality_file, "r", encoding="utf-8") as personality_file:
+            self.personality = json.load(personality_file)
+
+
+    def generate_response(self, get_input: str) -> str:
     # function body
         """
         Generates a response based on the user input.
@@ -76,7 +76,7 @@ class EcoBot:
                 },
                 {
                 "role": "user",
-                "content": user_input
+                "content": get_input
                 }
             ],
             temperature=0.72,
@@ -85,21 +85,22 @@ class EcoBot:
             frequency_penalty=0,
             presence_penalty=0
             )
-            logging.info("Response received: %s", ai_response)
-            if "choices" in ai_response and len(ai_response["choices"]) > 0:
-                message = ai_response["choices"][0]["message"]["content"]
+            if "id" in ai_response and len(ai_response["id"]) > 0:
+                message = ai_response["id"][0]["message"]["content"]
                 return message
             else:
+                logging.info("Response received: %s", ai_response)
                 logging.error("Unexpected response format: %s", ai_response)
                 return "Oops! There was a problem with the AI service. Let's try that again."
+
         except openai.OpenAIError as e:
             logging.error("An OpenAI-specific error occurred: %s", e)
             return "Oops! There was a problem with the AI service. Let's try that again."
 
-    def handle_input(self, user_input:str) -> str:
+    def handle_input(self, client_input:str) -> str:
         """
         Generates a response based on the user input.
-        
+
         Args:
             user_input (str): The input provided by the user.
             chat_id (int): The ID of the chat.
@@ -107,8 +108,8 @@ class EcoBot:
         Returns:
             str: The generated response.
         """
-        logging.info("User input: %s", user_input)
-        bot_response = self.generate_response(user_input)  # Pass user_input here
+        logging.info("User input: %s", client_input)
+        bot_response = self.generate_response(get_input=client_input)  # Pass user_input here
         logging.info("Response: %s", bot_response)
 
         return bot_response

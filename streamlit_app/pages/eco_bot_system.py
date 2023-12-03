@@ -4,7 +4,9 @@ Fixes the script by adding missing indentation and correcting function comments.
 Returns:
     None
 """
+import numpy as np
 import streamlit as st
+import streamlit.components.v1 as components
 from icecream import ic, IceCreamDebugger
 
 import sys
@@ -21,6 +23,11 @@ from eco_buddies.eco_bot_chat import EcoBot
 
 # Initialize the icecream module for debugging
 ic.configureOutput(prefix="DTA Debug | ")
+
+# add iframe link to streamlit to open the Whimsical flowchart
+whimsical_iframe = """
+<iframe style="border:none" width="800" height="450" src="https://whimsical.com/embed/JUyX8eXkcdgqpRKgqbKNC1"></iframe>
+"""
 
 # Initialize the EcoBotChat
 bot = EcoBot()
@@ -54,24 +61,10 @@ def eco_buddies_page():
     Returns:
         None
     """
-    # Title and Introduction
-    st.title("Eco-Bot System Overview")
-    st.write("Welcome to the Eco-Bot System! Here's a comprehensive overview of our system and its significance in promoting environmental sustainability.")
-
-    # Display Eco-Buddies Options
-    with open("eco_buddies_options.txt", "r", encoding="utf-8") as file:
-        eco_buddies_content = file.read()
-        st.write(eco_buddies_content)
-
-    # Overview Section
-    st.header("Overview")
-    st.write("""
-    This section provides an introduction to the Eco-Bot system and explains its purpose in promoting environmental sustainability.
-    """)
-
 # Title and Introduction
 st.title("Eco-Bot System Overview")
 st.write("Welcome to the Eco-Bot System! Here's a comprehensive overview of our system and its significance in promoting environmental sustainability.")
+
 
 # Overview Section
 st.header("Overview")
@@ -98,6 +91,8 @@ st.write("""
 In this section, you will find detailed information about the key components of the Eco-Bot system. These components include Digital Twins, which enable virtual simulations of real-world entities; the Centralized Communication Protocol, which ensures efficient communication between agents; the Centralized Data Management System, which stores and manages data; and the User Dashboard, which provides users with a user-friendly interface to interact with the system.
 """)
 
+components.html(whimsical_iframe, width=800, height=450, scrolling=True)
+
 # Challenges and Considerations Section
 st.header("Challenges and Considerations")
 st.write("""
@@ -109,12 +104,19 @@ st.header("Next Steps")
 st.write("""
 The Next Steps section outlines the subsequent stages of development for the Eco-Bot system. It covers activities such as planning, prototyping, and continuous optimization to ensure the system's effectiveness and efficiency.
 """)
+with st.chat_message("user"):
+    st.write("Hello")
+    st.line_chart(np.random.randn(30, 3))
 
 # Conclusion Section
 st.header("Conclusion")
 st.write("""
 In the conclusion, the document emphasizes the importance of careful planning and consideration in the development of the Eco-Bot system. It highlights the key components of the system, its challenges, and the next steps in the system's development.
 """)
+# Display Eco-Buddies Options
+with open("../streamlit_app/pages/eco_buddies_page.toml", "r", encoding="utf-8") as file:
+    eco_buddies_content = file.read()
+    st.write(eco_buddies_content)
 
 # Footer Section
 st.write("---")

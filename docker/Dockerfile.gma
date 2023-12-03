@@ -18,6 +18,5 @@ COPY gma/ .
 # If the GMA exposes any ports, specify them here (e.g., for a web server or API)
 # EXPOSE <port_number>
 
-# Define the command to run the GMA
-# Replace `gma_script.py` with the actual entry point of your GMA
+# Run the GMA script when the container launches
 CMD ["python", "GMA.py"]

@@ -1,7 +1,7 @@
 """
 This module is used to test the Eco-Bot vision functionality.
 """
-from IPython.display import display, Image, Audio
+from IPython.display import display, Image, Audio, HTML, Video, clear_output
 
 import cv2  # We're using OpenCV to read video
 import base64
@@ -12,6 +12,8 @@ import requests
 import os
 from dotenv import load_dotenv
 from openai import OpenAI
+import cv2
+from cv2 import imencode
 
 # Load API keys from .env file
 load_dotenv()
@@ -44,6 +46,8 @@ class EcoBot_Vision:
 
 class EcoBot_Video_Vision:
 
+
+
     def run_video(self, video_path):
         video = cv2.VideoCapture(video_path)
 
@@ -52,7 +56,7 @@ class EcoBot_Video_Vision:
             success, frame = video.read()
             if not success:
                 break
-            _, buffer = cv2.imencode(".jpg", frame)
+            _, buffer = imencode(".jpg", frame)
             base64Frames.append(base64.b64encode(buffer).decode("utf-8"))
 
         video.release()
@@ -82,7 +86,7 @@ class EcoBot_Video_Vision:
             "max_tokens": 200,
         }
 
-        result = openai.ChatCompletion.create(**params)
+        result = openai.chat.completions.create(**params)
         print(result.choices[0].message.content)
 
     def create_narraitor(self, base64Frames):
@@ -103,5 +107,5 @@ class EcoBot_Video_Vision:
             "max_tokens": 500,
         }
 
-        result = openai.ChatCompletion.create(**params)
+        result = openai.chat.completions.create(**params)
         print(result.choices[0].message.content)

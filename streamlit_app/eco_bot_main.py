@@ -5,31 +5,21 @@ to generate responses to user input.
 """
 import os
 import sys
-sys.path.append("..")
-from eco_buddies.eco_bot_chat import EcoBot
+import json
 import datetime
 import logging
 import openai
 import streamlit as st
+import streamlit_timeline as timeline
 import streamlit.components.v1 as components
 from icecream import ic
 from dotenv import load_dotenv
+sys.path.append("..")
+from eco_buddies.eco_bot_chat import EcoBot
 
 
 
 
-# Configure icecream to save output to a file in the debug folder
-def setup_icecream_debugging():
-    debug_folder = "debug"
-    if not os.path.exists(debug_folder):
-        os.makedirs(debug_folder)
-    debug_timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")  # Renamed variable
-    debug_file = os.path.join(debug_folder, f"debug_{debug_timestamp}.txt")  # Use the renamed variable
-    with open(debug_file, "a+", encoding="utf-8") as debug_file_handle:
-        ic.configureOutput(outputFunction=lambda s: debug_file_handle.write(s + '\n'))
-
-# Call this function at the beginning of your script or before you start logging
-setup_icecream_debugging()
 
 # Setup logging
 log_folder = "logs"
@@ -96,7 +86,7 @@ if eco_bot_image:
 
 show_avatar = st.checkbox("Show Interactive Avatar")
 if show_avatar:
-    with open("assets/ecobot_index.html", "r", encoding="utf-8") as f:
+    with open("./assets/ecobot_index.html", "r", encoding="utf-8") as f:
         avatar_html = f.read()
     components.html(avatar_html, height=450)
 # Chat Interface in a Container with Conditional Execution
@@ -152,6 +142,7 @@ with st.container():
             st.markdown(f"### {milestone['title']}")
             st.progress((index + 1) * 25)
             st.caption(milestone['description'])
+            st.link_button("Learn More", url="https://patreon.com/103935097")
         with col2:
             st.write(milestone['date'])
 
@@ -161,7 +152,7 @@ with st.container():
             st.warning("🔜 Upcoming")
 
         # Button to advance milestones
-        if st.button("Advance to Next Milestone", key="advance_milestone(1,2,3,4)"):
+        if st.button("Advance to Next Milestone", key=f"milestone_{index}"):
             if st.session_state.milestone < len(milestones) - 1:
                 st.session_state.milestone += 1
             else:
@@ -174,7 +165,14 @@ with st.container():
     Join our mission and support the development of Eco-Bot. Every contribution brings us closer to our goal.
     """)
     st.button("Donate Now",key="donate_now")
-
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        st.link_button("https://www.justgiving.com/crowdfunding/Eco-Bot?utm_term=2VGrAgRdD",)
+    with col2:
+        st.link_button("Patreon", url="https://patreon.com/user?u=103935097",)
+    with col3:
+        st.link_button("Youtube", url="https://youtube.com/@EcoBot-qp4ss?si=ojG3SWdomEU5nX6w",)
+    # create three columns
 # Footer
 st.write("---")
 st.write("Eco-Bot © 2023 | Contact Us | Terms of Service")
