@@ -2,8 +2,6 @@
 This script is a template for updating a Notion database using the Notion API.
 
 """
-
-
 import csv
 import requests
 

@@ -1,8 +1,11 @@
 // Import D3
-import * as d3 from 'd3';
+import * as d3 from 'https://cdn.jsdelivr.net/npm/d3@6/dist/d3.min.js';
+
 
 // Define a color scale for node groups
-const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
+const colorScale = d3.scaleOrdinal()
+    .domain(["group1", "group2", "group3"]) // Define the domain of the color scale
+    .range(["#ff0000", "#00ff00", "#0000ff"]); // Define the range of colors for the groups
 
 function createNodes(svg, nodes) {
     // Append groups for nodes
@@ -58,5 +61,6 @@ function createLinks(svg, links) {
     return linkEnter;
 }
 
+// 
 // Export the functions
 export { createNodes, createLinks };

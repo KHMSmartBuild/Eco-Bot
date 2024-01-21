@@ -1,8 +1,9 @@
 
 
 import streamlit as st
-from streamlit_webrtc import VideoTransformerBase, webrtc_streamer
-import streamlit.components.v1 as components
+#import streamlit.components.v1 as components
+from eco_buddies.eco_chat import EcoBot
+from icecream import ic
 
 # Streamlit App Configuration
 st.set_page_config(
@@ -10,6 +11,12 @@ st.set_page_config(
     page_icon=":robot:",
     layout="wide",
     initial_sidebar_state="expanded",
+    menu_items={
+        'Get Help': 'https://www.google.com/',
+        'Report a bug': 'https://www.google.com/',
+        'About': 'This is a simple Eco-Bot chat bot that uses OpenAI\'s GPT-4 model to generate responses to user input.'
+    }
+    
 )
 
 # Page Title
@@ -36,7 +43,7 @@ with st.container():
     with col3:
         st.image(f"assets/images/eco-botLF.png", caption="Eco-Bot", use_column_width=True)
 st.write("Litter is one of the biggest challenges we face today. How can we ensure that we are using as much as possible of our waste?")
-st.chat_input("Ask Eco-Bot a question: ")
+
 # How To Solve The Challenge with Eco-Bot
 # Page Contents
 with st.container():
@@ -44,14 +51,13 @@ with st.container():
     st.write("""
     Eco-Bot is a chatbot that helps you find the best way to recycle your waste. 
     """)
-    if st.checkbox("Show Video", False):
-        class ImageProcessor(VideoTransformerBase):
-            def transform(self, frame):
-                img = frame.to_ndarray(format="bgr24")
-                
-                # Add your image processing logic here
-                
-                return img
-
-        webrtc_streamer(key="example", video_transformer_factory=ImageProcessor)
-components.html("""<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>""")
+    if st.checkbox("Show Camera", False):
+        st.camera_input("Take a picture of your waste")
+        st.write("upload a picture of your waste")
+        st.selectbox("Select an option", ("Option 1", "Option 2", "Option 3"))
+        st.write("Eco-Bot will tell you how to recycle your waste")
+    
+        # Display Eco-Bot Image
+        st.image(f"assets/images/eco-bot.png", caption="Eco-Bot", use_column_width=False, width=150)
+        st.chat_input("Ask Eco-Bot a question: ")
+        

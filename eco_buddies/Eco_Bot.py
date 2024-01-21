@@ -1,19 +1,16 @@
 """
 This module is used to test the Eco-Bot vision functionality.
 """
-from IPython.display import display, Image, Audio, HTML, Video, clear_output
-
-import cv2  # We're using OpenCV to read video
+import io
 import base64
 import time
-import openai
 import os
-import requests
-import os
+import cv2
+from PIL import Image
+from IPython.display import display, Image, Audio, HTML, Video, clear_output
 from dotenv import load_dotenv
 from openai import OpenAI
-import cv2
-from cv2 import imencode
+import numpy as np
 
 # Load API keys from .env file
 load_dotenv()
@@ -22,32 +19,74 @@ client = OpenAI()
 client.api_key = os.getenv("OPENAI_API_KEY")
 
 class EcoBot_Vision:
-    response = client.chat.completions.create(
-        model="gpt-4-vision-preview",
-        messages=[
-            {
-                "role": "user",
-                "content": [
-                    {"type": "text", "text": "What’s in this image?"},
-                    {
-                        "type": "image_url",
-                        "image_url": {
-                            "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg",
-                        },
-                    },
-                ],
-            }
-        ],
-        max_tokens=300,
-    )
+    """
+    This is a simple Eco-Bot chat bot that uses OpenAI's GPT-4-1106 preview model
+    for image processing.
+    """
+    def __init__(self):
+        """
+        Initializes a new instance of the class.
 
-    print(response.choices[0])
-    # TODO - CHANGE the code to allow user to input the image, display the image and the response 
+        This function is the constructor for the class. It is called when a new object of the class is created. It initializes the object by calling the constructor of the superclass.
+
+        Parameters:
+            None
+
+        Returns:
+            None
+        """
+        super().__init__()
+        self.conversation_history = []
+
+
+    def run_image(self):
+        """
+        Runs the image processing on the user-specified image.
+
+        Returns:
+            None
+
+        TODO:
+            - Prompt the user to input the image file path.
+            - Display the image and the response.
+        """
+        image_path = input("Enter the path to the image file: ")
+        try:
+            with open(image_path, "rb") as f:
+                image = Image.open(io.BytesIO(f.read()))
+                image.show()
+                messages = [
+                    {
+                        "role": "user",
+                        "content": [
+                            {"type": "text", "text": "What’s in this image?"},
+                            {
+                                "type": "image_url",
+                                "image_url": {
+                                    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg",
+                                },
+                            },
+                        ],
+                    }
+                ]
+                response = client.chat.completions.create(
+                    model="gpt-4-vision-preview",
+                    messages=messages,
+                    max_tokens=300,
+                )
+                eco_vision_response = response.choices[0].message.content
+                eval(eco_vision_response)
+                print(eco_vision_response)
+        except FileNotFoundError:
+            raise FileNotFoundError("Image file not found.")
 
 class EcoBot_Video_Vision:
-
-
-
+    """
+    This is a simple Eco-Bot chat bot that uses OpenAI's GPT-4-1106 preview model
+    for video processing.
+    """
+    def __init__(self):
+        super().__init__()
     def run_video(self, video_path):
         video = cv2.VideoCapture(video_path)
 

@@ -109,6 +109,19 @@ header {
     animation: rustleLeaves 2s infinite ease-in-out;
 }
 
+/* Add your CSS styling here */
+#game-container {
+    /* Example styles */
+    width: 100%;
+    height: 400px;
+    background-color: #e9e9e9;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 @keyframes rustleLeaves {
     0% {
         transform: rotate(0deg);

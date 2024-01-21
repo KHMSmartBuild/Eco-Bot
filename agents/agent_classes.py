@@ -40,8 +40,7 @@ class AgentClass:
         self.role = role
         self.llm_config = llm_config
         self.agent_creator = Agent(name="Agent Creator")
-        agent = Agent()
-        self.digital_twin = DigitalTwinAgent(agent)  # Create the Digital Twin
+        self.digital_twin = DigitalTwinAgent(self.agent_creator)  # Create the Digital Twin
 
 
     class GeneralManager(UserProxyAgent):

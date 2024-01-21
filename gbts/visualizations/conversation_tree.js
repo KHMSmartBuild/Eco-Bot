@@ -1,15 +1,16 @@
 // Import Three.js and controls
-import * as THREE from '../../node_modules/three/build/three';
-import { OrbitControls } from '../../node_modules/three/examples/jsm/controls/OrbitControls';
-
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@latest/build/three.module.js'
+import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@latest/examples/jsm/controls/OrbitControls.js';
+document.addEventListener('DOMContentLoaded', (event) => {
 // Get the container element
 const container = document.getElementById('treeContainer');
+
 
 // Setup the Three.js scene, camera, and renderer
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
 const renderer = new THREE.WebGLRenderer();
-renderer.setSize(1, 1);
+renderer.setSize(container.clientWidth, container.clientHeight);
 container.appendChild(renderer.domElement); // Append to the container instead of body
 
 // Add orbit controls for camera manipulation
@@ -62,6 +63,7 @@ createTree();
 
 // Animation loop for rendering the Three.js scene
 function animate() {
+    console.log('Animating');
     requestAnimationFrame(animate);
     controls.update();
     renderer.render(scene, camera);
@@ -81,3 +83,6 @@ window.addEventListener('resize', onWindowResize, false);
 
 // Start the animation loop
 animate();
+console.log('Done');
+
+});

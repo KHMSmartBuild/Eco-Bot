@@ -27,3 +27,5 @@ const seedData = {
 };
 export default seedData;
 
+export {seedData}
+

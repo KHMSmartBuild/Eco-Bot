@@ -1,7 +1,8 @@
 // Description: This file contains functions for adding interactivity to the visualization.
 
 // Import D3 modules
-import * as d3 from 'd3';
+import * as d3 from 'https://cdn.jsdelivr.net/npm/d3@6/dist/d3.min.js';
+
 
 // Singleton tooltip
 const tooltip = d3.select("body").append("div")

@@ -1,5 +1,5 @@
 import React from 'react';
-import './Avatar.css'; 
+import './styles.css'; 
 
 function Avatar(props) {
     return (

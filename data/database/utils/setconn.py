@@ -1,6 +1,12 @@
+# /data/database/utils/setconn.py
+"""
+This module sets up the connection to the database. 
+db_host, db_port, db_name, db_user, and db_password are environment variables.
+details are stored in .env file
+"""
 import os
 from sqlalchemy import create_engine, MetaData
-from sqlalchemy.orm import sessionmaker, mapper, clear_mappers
+from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.automap import automap_base
 from dotenv import load_dotenv
 
@@ -19,6 +25,7 @@ engine = create_engine(f"postgresql://{db_user}:{db_password}@{db_host}:{db_port
 # Reflect the tables
 metadata = MetaData()
 metadata.reflect(engine)
+
 
 # Generate mapped classes
 Base = automap_base(metadata=metadata)
@@ -40,5 +47,3 @@ images = session.query(DockerImages).all()
 metadata = MetaData()
 metadata.reflect(engine)
 
-# Print the names of the reflected tables
-print("Reflected tables:", metadata.tables.keys())

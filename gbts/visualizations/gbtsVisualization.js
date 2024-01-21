@@ -11,9 +11,11 @@
 // gbtsVisualization.js
 
 // Import D3 modules
-import * as d3 from '../../node_modules/d3/dist/d3.js';
+import * as d3 from 'https://cdn.jsdelivr.net/npm/d3@6/dist/d3.min.js';
+import { seedData } from './seedData.js';
 // Import necessary modules
 import { createNodes, createLinks } from './nodesAndLinks.js';
+import { handleMouseOver, handleMouseOut,handleClick } from './interactivity.js';
 
 // Function to initialize the force-directed graph
 function initializeForceGraph() {
@@ -28,7 +30,7 @@ function initializeForceGraph() {
     }
 
     // Append the SVG object to the body of the page
-    const svgContainer = d3.select("#visualization");
+    const svgContainer = d3.select("visualization");
     if (svgContainer.empty()) {
         throw new Error('GBTS Visualization: Element with id "visualization" not found'); // Throw an error if element is not found
     }

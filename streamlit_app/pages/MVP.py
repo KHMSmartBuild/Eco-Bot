@@ -16,7 +16,7 @@ from icecream import ic
 # Append the parent directory to sys.path
 sys.path.append("..")
 from gbts.gbts import GBTS
-from eco_buddies.eco_bot_chat import EcoBot
+from eco_buddies.eco_chat import EcoBot
 
 
 # Initialize icecream setup

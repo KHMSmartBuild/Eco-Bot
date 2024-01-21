@@ -1,81 +1,124 @@
 # db_operations.py
+"""
+db_operations.py is a file that contains all the database operations for the Agent_DB.
+each table in the database is mapped to a class in the db_operations.py file.
+"""
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy import TIMESTAMP, JSON, Boolean, Text
-from sqlalchemy.ext.declarative import declarative_base
 from data.database.utils.setconn import session, Base, engine
+from logging import getLogger, StreamHandler, INFO, Formatter, FileHandler, basicConfig
 
+
+
+# Create a logger object
+logger = getLogger(__name__)
+logger.setLevel(INFO)
+basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
+# Create handlers
+console_handler = StreamHandler()
+file_handler = FileHandler('db_operations.log')
+console_handler.setLevel(INFO)
+file_handler.setLevel(INFO)
+
+# Create formatters and add it to handlers
+console_formatter = Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+file_formatter = Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+console_handler.setFormatter(console_formatter)
+file_handler.setFormatter(file_formatter)
+
+# Add handlers to the logger
+logger.addHandler(console_handler)
+logger.addHandler(file_handler)
+
+# Create a session object
+Session = session()
 
 class BaseCRUD:
     """
     Base class for CRUD operations.
     """
-    def create(self, session, **kwargs):
+    __abstract__ = True  # Indicates that BaseCRUD is an abstract class
+
+    def __init__(self, **kwargs):
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+    def create(self, session: Session, **kwargs) -> None:
         """
         Create a new instance of the class and add it to the session.
 
         Args:
-            session: The session object to add the instance to.
+            session (Session): The session object to add the instance to.
             **kwargs: The keyword arguments used to initialize the instance.
 
         Returns:
             The newly created instance.
         """
-        instance = self(**kwargs)
+        instance = self.__class__(kwargs=str(kwargs))
         session.add(instance)
         session.commit()
         return instance
 
-    @classmethod
-    def read(cls, session, id):
-        """
-        Read a record from the database based on the given id.
+@classmethod
+def read(cls, session: Session, record_id: int):
+    """
+    Read a record from the database based on the given id.
 
-        :param session: The session object to use for the database query.
-        :type session: Session
-        :param id: The id of the record to retrieve.
-        :type id: int
-        :return: The first record found with the given id, or None if no record is found.
-        :rtype: object
-        """
-        return session.query(cls).filter_by(id=id).first()
-    
-    @classmethod
-    def update(self, session, **kwargs):
-        """
-        Updates the object's attributes with the provided keyword arguments and commits the changes to the session.
+    :param session: The session object to use for the database query.
+    :type session: Session
+    :param id: The id of the record to retrieve.
+    :type id: int
+    :return: The first record found with the given id, or None if no record is found.
+    :rtype: object
+    """
+    return session.query(cls).filter_by(record_id=record_id).first()
 
-        Args:
-            session (object): The session object used to commit the changes.
-            **kwargs: The keyword arguments containing the attribute names and their new values.
 
-        Returns:
-            object: The updated object.
+@classmethod
+def update(cls, session: Session, record_id: int, **kwargs):
+    """
+    Updates an existing record in the database with the given kwargs.
 
-        """
+    Args:
+        session (Session): The database session.
+        record_id (int): The ID of the record to be updated.
+        **kwargs: Variable keyword arguments for the record attributes to be updated.
+
+    Returns:
+        instance: The updated instance of the record if it exists, otherwise None.
+    """
+    instance = session.query(cls).filter_by(record_id=record_id).first()
+    if instance:
         for attr, value in kwargs.items():
-            setattr(self, attr, value)
+            setattr(instance, attr, value)
         session.commit()
-        return self
+        return instance
+    else:
+        # handle the case where the record does not exist
+        pass
 
-    @classmethod
-    def delete(self, session):
-        """
-        Deletes the current object from the database.
 
-        Parameters:
-            session (Session): The SQLAlchemy session to use for the deletion.
+@classmethod
+def delete(cls, session: Session, record_id: int):
+    """
+    Delete a record by its ID.
 
-        Returns:
-            None
-        """
-        session.delete(self)
+    Args:
+        session (Session): The database session.
+        record_id (int): The ID of the record to be deleted.
+    """
+    instance = session.query(cls).filter_by(record_id=record_id).first()
+    if instance:
+        session.delete(instance)
         session.commit()
+        logger.info(f"Deleted record: {instance}")
+        print("Deleted record:", instance)
+    else:
+        # handle the case where the record does not exist
+        pass
 
-Base = declarative_base()
-"""
-db_operations.py is a file that contains all the database operations for the Agent_DB.
-each table in the database is mapped to a class in the db_operations.py file.
-"""
+
 
 class Agent(Base, BaseCRUD):
     """
