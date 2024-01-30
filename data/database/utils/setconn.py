@@ -8,6 +8,7 @@ import os
 from sqlalchemy import create_engine, MetaData
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.automap import automap_base
+from db_operations import * 
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -43,7 +44,9 @@ session = Session()
 # Now you can query your tables. For example:
 images = session.query(DockerImages).all()
 
-# Reflect the tables
-metadata = MetaData()
-metadata.reflect(engine)
+# connect to the classes through db_operations
+BaseCRUD = BaseCRUD(session=session)
+
+# Create a new record
+new_record = BaseCRUD.create(session, name="John Doe", age=30)
 

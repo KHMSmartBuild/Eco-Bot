@@ -3,11 +3,10 @@
 db_operations.py is a file that contains all the database operations for the Agent_DB.
 each table in the database is mapped to a class in the db_operations.py file.
 """
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey, MetaData
 from sqlalchemy import TIMESTAMP, JSON, Boolean, Text
 from data.database.utils.setconn import session, Base, engine
 from logging import getLogger, StreamHandler, INFO, Formatter, FileHandler, basicConfig
-
 
 
 # Create a logger object
@@ -32,7 +31,7 @@ logger.addHandler(console_handler)
 logger.addHandler(file_handler)
 
 # Create a session object
-Session = session()
+conn = session(Base, engine)
 
 class BaseCRUD:
     """
@@ -44,7 +43,7 @@ class BaseCRUD:
         for key, value in kwargs.items():
             setattr(self, key, value)
 
-    def create(self, session: Session, **kwargs) -> None:
+    def create(self, session: conn, **kwargs) -> None:
         """
         Create a new instance of the class and add it to the session.
 
@@ -58,65 +57,69 @@ class BaseCRUD:
         instance = self.__class__(kwargs=str(kwargs))
         session.add(instance)
         session.commit()
+        session.refresh(instance)
+        logger.info("Created record: %s", instance)
         return instance
 
-@classmethod
-def read(cls, session: Session, record_id: int):
-    """
-    Read a record from the database based on the given id.
+    @classmethod
+    def read(cls, session: conn, record_id: int):
+        """
+        Read a record from the database based on the given id.
 
-    :param session: The session object to use for the database query.
-    :type session: Session
-    :param id: The id of the record to retrieve.
-    :type id: int
-    :return: The first record found with the given id, or None if no record is found.
-    :rtype: object
-    """
-    return session.query(cls).filter_by(record_id=record_id).first()
-
-
-@classmethod
-def update(cls, session: Session, record_id: int, **kwargs):
-    """
-    Updates an existing record in the database with the given kwargs.
-
-    Args:
-        session (Session): The database session.
-        record_id (int): The ID of the record to be updated.
-        **kwargs: Variable keyword arguments for the record attributes to be updated.
-
-    Returns:
-        instance: The updated instance of the record if it exists, otherwise None.
-    """
-    instance = session.query(cls).filter_by(record_id=record_id).first()
-    if instance:
-        for attr, value in kwargs.items():
-            setattr(instance, attr, value)
-        session.commit()
-        return instance
-    else:
-        # handle the case where the record does not exist
-        pass
+        :param session: The session object to use for the database query.
+        :type session: Session
+        :param id: The id of the record to retrieve.
+        :type id: int
+        :return: The first record found with the given id, or None if no record is found.
+        :rtype: object
+        """
+        logger.info("Reading record: %s", record_id, extra={'record_id': record_id})
+        return session.query(cls).filter_by(record_id=record_id).first()
 
 
-@classmethod
-def delete(cls, session: Session, record_id: int):
-    """
-    Delete a record by its ID.
+    @classmethod
+    def update(cls, session: conn, record_id: int, **kwargs):
+        """
+        Updates an existing record in the database with the given kwargs.
 
-    Args:
-        session (Session): The database session.
-        record_id (int): The ID of the record to be deleted.
-    """
-    instance = session.query(cls).filter_by(record_id=record_id).first()
-    if instance:
-        session.delete(instance)
-        session.commit()
-        logger.info(f"Deleted record: {instance}")
-        print("Deleted record:", instance)
-    else:
-        # handle the case where the record does not exist
-        pass
+        Args:
+            session (Session): The database session.
+            record_id (int): The ID of the record to be updated.
+            **kwargs: Variable keyword arguments for the record attributes to be updated.
+
+        Returns:
+            instance: The updated instance of the record if it exists, otherwise None.
+        """
+        instance = session.query(cls).filter_by(record_id=record_id).first()
+        if instance:
+            for attr, value in kwargs.items():
+                setattr(instance, attr, value)
+            session.commit()
+            logger.info("Updated record: %s", instance, extra={'record_id': record_id})
+            return instance
+        else:
+            # handle the case where the record does not exist
+            pass
+
+
+    @classmethod
+    def delete(cls, session: conn, record_id: int):
+        """
+        Delete a record by its ID.
+
+        Args:
+            session (Session): The database session.
+            record_id (int): The ID of the record to be deleted.
+        """
+        instance = session.query(cls).filter_by(record_id=record_id).first()
+        if instance:
+            session.delete(instance)
+            session.commit()
+            logger.info("Deleted record: %s", instance, extra={'record_id': record_id})
+            print("Deleted record:", instance)
+        else:
+            # handle the case where the record does not exist
+            pass
 
 
 
@@ -139,6 +142,11 @@ class Agent(Base, BaseCRUD):
 
 
     # Define the CRUD methods here
+    create = BaseCRUD.create
+    read = BaseCRUD.read
+    update = BaseCRUD.update
+    delete = BaseCRUD.delete
+
 
 class AgentProfile(Base, BaseCRUD):
     """
@@ -155,6 +163,10 @@ class AgentProfile(Base, BaseCRUD):
     updated_at = Column(TIMESTAMP)
 
     # Define the CRUD methods here
+    create = BaseCRUD.create
+    read = BaseCRUD.read
+    update = BaseCRUD.update
+    delete = BaseCRUD.delete
 
 class AgentFunction(Base, BaseCRUD):
     """
@@ -169,6 +181,10 @@ class AgentFunction(Base, BaseCRUD):
     executionfreq = Column(Integer)
 
     # Define the CRUD methods here
+    create = BaseCRUD.create
+    read = BaseCRUD.read
+    update = BaseCRUD.update
+    delete = BaseCRUD.delete
 
 
 class AgentAPICall(Base, BaseCRUD):
@@ -184,6 +200,10 @@ class AgentAPICall(Base, BaseCRUD):
     response_status = Column(Integer)
 
     # Define the CRUD methods here
+    create = BaseCRUD.create
+    read = BaseCRUD.read
+    update = BaseCRUD.update
+    delete = BaseCRUD.delete
 
 
 class AgentGroupChatAssociation(Base, BaseCRUD):
@@ -196,6 +216,10 @@ class AgentGroupChatAssociation(Base, BaseCRUD):
     chat_id = Column(Integer, ForeignKey('group_chats.chat_id'), primary_key=True)
 
     # Define the CRUD methods here
+    create = BaseCRUD.create
+    read = BaseCRUD.read
+    update = BaseCRUD.update
+    delete = BaseCRUD.delete
 
 class Assistant(Base, BaseCRUD):
     """
@@ -208,6 +232,10 @@ class Assistant(Base, BaseCRUD):
     role = Column(String(255))
 
     # Define the CRUD methods here
+    create = BaseCRUD.create
+    read = BaseCRUD.read
+    update = BaseCRUD.update
+    delete = BaseCRUD.delete
 
 class Container(Base, BaseCRUD):
     """
@@ -221,6 +249,10 @@ class Container(Base, BaseCRUD):
     status = Column(String(255), nullable=False)
 
     # Define the CRUD methods here
+    create = BaseCRUD.create
+    read = BaseCRUD.read
+    update = BaseCRUD.update
+    delete = BaseCRUD.delete
 
 
 class ConversationThread(Base, BaseCRUD):
@@ -235,6 +267,10 @@ class ConversationThread(Base, BaseCRUD):
     Status = Column(String(255))
 
     # Define the CRUD methods here
+    create = BaseCRUD.create
+    read = BaseCRUD.read
+    update = BaseCRUD.update
+    delete = BaseCRUD.delete
 
 class DebugInfo(Base, BaseCRUD):
     """
@@ -250,6 +286,10 @@ class DebugInfo(Base, BaseCRUD):
     message = Column(String(255))
     
     # Define the CRUD methods here
+    create = BaseCRUD.create
+    read = BaseCRUD.read
+    update = BaseCRUD.update
+    delete = BaseCRUD.delete
 
 class DockerImage(Base, BaseCRUD):
     """
@@ -262,6 +302,10 @@ class DockerImage(Base, BaseCRUD):
     lastupdate = Column(TIMESTAMP)
 
     # Define the CRUD methods here
+    create = BaseCRUD.create
+    read = BaseCRUD.read
+    update = BaseCRUD.update
+    delete = BaseCRUD.delete
 
 class ExternalAPI(Base, BaseCRUD):
     """
@@ -277,6 +321,10 @@ class ExternalAPI(Base, BaseCRUD):
     last_used = Column(TIMESTAMP)
 
     # Define the CRUD methods here
+    create = BaseCRUD.create
+    read = BaseCRUD.read
+    update = BaseCRUD.update
+    delete = BaseCRUD.delete
 
 class GBTSPrompt(Base, BaseCRUD):
     """
@@ -289,6 +337,10 @@ class GBTSPrompt(Base, BaseCRUD):
     description = Column(String(255))
 
     # Define the CRUD methods here
+    create = BaseCRUD.create
+    read = BaseCRUD.read
+    update = BaseCRUD.update
+    delete = BaseCRUD.delete
 
 class GBTSResponse(Base, BaseCRUD):
     """
@@ -303,6 +355,10 @@ class GBTSResponse(Base, BaseCRUD):
     response_time = Column(TIMESTAMP)
 
     # Define the CRUD methods here
+    create = BaseCRUD.create
+    read = BaseCRUD.read
+    update = BaseCRUD.update
+    delete = BaseCRUD.delete
 
 class GroupChat(Base, BaseCRUD):
     """
@@ -316,6 +372,10 @@ class GroupChat(Base, BaseCRUD):
     status = Column(String(255), nullable=False)
 
     # Define the CRUD methods here
+    create = BaseCRUD.create
+    read = BaseCRUD.read
+    update = BaseCRUD.update
+    delete = BaseCRUD.delete
 
 
 class Message(Base, BaseCRUD):
@@ -331,6 +391,10 @@ class Message(Base, BaseCRUD):
     timestamp = Column(TIMESTAMP)
 
     # Define the CRUD methods here
+    create = BaseCRUD.create
+    read = BaseCRUD.read
+    update = BaseCRUD.update
+    delete = BaseCRUD.delete
 
 class Project(Base, BaseCRUD):
     """
@@ -346,6 +410,10 @@ class Project(Base, BaseCRUD):
     status = Column(Boolean, nullable=False)
 
     # Define the CRUD methods here
+    create = BaseCRUD.create
+    read = BaseCRUD.read
+    update = BaseCRUD.update
+    delete = BaseCRUD.delete
 
 class Run(Base, BaseCRUD):
     """
@@ -358,6 +426,10 @@ class Run(Base, BaseCRUD):
     status = Column(String(255))
 
     # Define the CRUD methods here
+    create = BaseCRUD.create
+    read = BaseCRUD.read
+    update = BaseCRUD.update
+    delete = BaseCRUD.delete
 
 class SystemLog(Base, BaseCRUD):
     """
@@ -372,6 +444,10 @@ class SystemLog(Base, BaseCRUD):
     message = Column(String(255))
 
     # Define the CRUD methods here
+    create = BaseCRUD.create
+    read = BaseCRUD.read
+    update = BaseCRUD.update
+    delete = BaseCRUD.delete
 
 class Task(Base, BaseCRUD):
     """
@@ -386,6 +462,10 @@ class Task(Base, BaseCRUD):
     assigned_agent_id = Column(Integer, ForeignKey('agents.agentid'))
 
     # Define the CRUD methods here
+    create = BaseCRUD.create
+    read = BaseCRUD.read
+    update = BaseCRUD.update
+    delete = BaseCRUD.delete
 
 class TaskHistory(Base, BaseCRUD):
     """
@@ -399,6 +479,10 @@ class TaskHistory(Base, BaseCRUD):
     change_timestamp = Column(TIMESTAMP)
 
     # Define the CRUD methods here
+    create = BaseCRUD.create
+    read = BaseCRUD.read
+    update = BaseCRUD.update
+    delete = BaseCRUD.delete
 
 class TaskStatus(Base, BaseCRUD):
     """
@@ -410,6 +494,10 @@ class TaskStatus(Base, BaseCRUD):
     status_name = Column(String(255), nullable=False)
 
     # Define the CRUD methods here
+    create = BaseCRUD.create
+    read = BaseCRUD.read
+    update = BaseCRUD.update
+    delete = BaseCRUD.delete
 
 class TaskPriority(Base, BaseCRUD):
     """
@@ -421,6 +509,10 @@ class TaskPriority(Base, BaseCRUD):
     priority_level = Column(String(255), nullable=False)
 
     # Define the CRUD methods here
+    create = BaseCRUD.create
+    read = BaseCRUD.read
+    update = BaseCRUD.update
+    delete = BaseCRUD.delete
 
 class Thread(Base, BaseCRUD):
     """
@@ -433,6 +525,10 @@ class Thread(Base, BaseCRUD):
     title = Column(String(255))
 
     # Define the CRUD methods here
+    create = BaseCRUD.create
+    read = BaseCRUD.read
+    update = BaseCRUD.update
+    delete = BaseCRUD.delete
 
 class User(Base, BaseCRUD):
     """
@@ -450,6 +546,10 @@ class User(Base, BaseCRUD):
     chat = Column(JSON)
 
     # Define the CRUD methods here
+    create = BaseCRUD.create
+    read = BaseCRUD.read
+    update = BaseCRUD.update
+    delete = BaseCRUD.delete
 
 class Websocket(Base, BaseCRUD):
     """
@@ -463,6 +563,10 @@ class Websocket(Base, BaseCRUD):
     protocol = Column(String(255))
 
     # Define the CRUD methods here
+    create = BaseCRUD.create
+    read = BaseCRUD.read
+    update = BaseCRUD.update
+    delete = BaseCRUD.delete
 
 class CacheData(Base, BaseCRUD):
     """
@@ -476,6 +580,10 @@ class CacheData(Base, BaseCRUD):
     expiry_time = Column(TIMESTAMP)
 
     # Define the CRUD methods here
+    create = BaseCRUD.create
+    read = BaseCRUD.read
+    update = BaseCRUD.update
+    delete = BaseCRUD.delete
 
 class DigitalTwin(Base, BaseCRUD):
     """
@@ -490,6 +598,10 @@ class DigitalTwin(Base, BaseCRUD):
     last_synced = Column(TIMESTAMP)
 
     # Define the CRUD methods here
+    create = BaseCRUD.create
+    read = BaseCRUD.read
+    update = BaseCRUD.update
+    delete = BaseCRUD.delete
 
 class ChatMetadata(Base, BaseCRUD):
     """
@@ -502,8 +614,11 @@ class ChatMetadata(Base, BaseCRUD):
     creation_time = Column(TIMESTAMP)
     purpose = Column(String(255))
     
-
     # Define the CRUD methods here
+    create = BaseCRUD.create
+    read = BaseCRUD.read
+    update = BaseCRUD.update
+    delete = BaseCRUD.delete
 
 class ChatHistory(Base, BaseCRUD):
     """
@@ -517,6 +632,10 @@ class ChatHistory(Base, BaseCRUD):
     timestamp = Column(TIMESTAMP)
 
     # Define the CRUD methods here
+    create = BaseCRUD.create
+    read = BaseCRUD.read
+    update = BaseCRUD.update
+    delete = BaseCRUD.delete
 
 class ChatSetting(Base, BaseCRUD):
     """
@@ -529,6 +648,10 @@ class ChatSetting(Base, BaseCRUD):
     settings_data = Column(JSON)
 
     # Define the CRUD methods here
+    create = BaseCRUD.create
+    read = BaseCRUD.read
+    update = BaseCRUD.update
+    delete = BaseCRUD.delete
 
 class ChatVisualizationData(Base, BaseCRUD):
     """
@@ -542,6 +665,10 @@ class ChatVisualizationData(Base, BaseCRUD):
     visualization_data = Column(JSON)
 
     # Define the CRUD methods here
+    create = BaseCRUD.create
+    read = BaseCRUD.read
+    update = BaseCRUD.update
+    delete = BaseCRUD.delete
 
 class CodeExecution(Base, BaseCRUD):
     """
@@ -557,6 +684,10 @@ class CodeExecution(Base, BaseCRUD):
     executiontime = Column(TIMESTAMP)
 
     # Define the CRUD methods here
+    create = BaseCRUD.create
+    read = BaseCRUD.read
+    update = BaseCRUD.update
+    delete = BaseCRUD.delete
 
 class ResourceLimit(Base, BaseCRUD):
     """
@@ -569,6 +700,10 @@ class ResourceLimit(Base, BaseCRUD):
     max_limit = Column(Integer)
 
     # Define the CRUD methods here
+    create = BaseCRUD.create
+    read = BaseCRUD.read
+    update = BaseCRUD.update
+    delete = BaseCRUD.delete
 
 class ResourceUsage(Base, BaseCRUD):
     """
@@ -582,6 +717,10 @@ class ResourceUsage(Base, BaseCRUD):
     current_usage = Column(JSON)
 
     # Define the CRUD methods here
+    create = BaseCRUD.create
+    read = BaseCRUD.read
+    update = BaseCRUD.update
+    delete = BaseCRUD.delete
 
 class UserPreference(Base, BaseCRUD):
     """
@@ -594,6 +733,10 @@ class UserPreference(Base, BaseCRUD):
     preferences_data = Column(JSON)
 
     # Define the CRUD methods here
+    create = BaseCRUD.create
+    read = BaseCRUD.read
+    update = BaseCRUD.update
+    delete = BaseCRUD.delete
 
 
 class Rule(Base, BaseCRUD):
@@ -608,6 +751,10 @@ class Rule(Base, BaseCRUD):
     priority = Column(Integer)
 
     # Define the CRUD methods here
+    create = BaseCRUD.create
+    read = BaseCRUD.read
+    update = BaseCRUD.update
+    delete = BaseCRUD.delete
 
 class Tool(Base, BaseCRUD):
     """
@@ -621,6 +768,10 @@ class Tool(Base, BaseCRUD):
     tool_resource_requirements = Column(JSON)
 
     # Define the CRUD methods here
+    create = BaseCRUD.create
+    read = BaseCRUD.read
+    update = BaseCRUD.update
+    delete = BaseCRUD.delete
 
 class ContainerTool(Base, BaseCRUD):
     """
@@ -631,6 +782,10 @@ class ContainerTool(Base, BaseCRUD):
     container_id = Column(Integer, ForeignKey('containers.container_id'), primary_key=True)
     tool_id = Column(Integer, ForeignKey('tools.tool_id'), primary_key=True)
 
-    # Define the CRUD methods here
+        # Define the CRUD methods here
+    create = BaseCRUD.create
+    read = BaseCRUD.read
+    update = BaseCRUD.update
+    delete = BaseCRUD.delete
 
 Base.metadata.create_all(engine)

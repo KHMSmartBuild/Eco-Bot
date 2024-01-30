@@ -1,24 +1,24 @@
+# agents\assistants\assistant_gaia.py
+"""This module contains the GaiaAssistant class."""
+
 import sys
-import os
+# import os
 from collections import defaultdict
-import openai
 import json
 import time
 import logging
-from autogen.agentchat.agent import Agent
-from autogen.agentchat.assistant_agent import ConversableAgent
-from autogen.agentchat.assistant_agent import AssistantAgent
+import openai
+from autogen.agentchat import UserProxyAgent, AssistantAgent, Agent, GroupChat, GroupChatManager
 from typing import Dict, Optional, Union, List, Tuple, Any
 sys.path.append("../agents")
-from agents.config.config_setup import config_setup
+from agents.config import get_config_list, get_config_json_string
 from agents.assistants.assistant_retrevial import retrieve_assistants_by_name
 
 logger = logging.getLogger(__name__)
 openai_client = openai.OpenAI()
-LLMConfig = config_setup(json.loads(open("OAI_CONFIG_LIST.js").read()))
+llm_config = get_config_list()
 
-
-class GaiaAssistant(ConversableAgent):
+class GaiaAssistant(UserProxyAgent,GroupChatManager):
     """
     An experimental AutoGen agent class that leverages the OpenAI Assistant API for conversational capabilities.
     This agent is unique in its reliance on the OpenAI Assistant for state management, differing from other agents like ConversableAgent.
@@ -28,7 +28,7 @@ class GaiaAssistant(ConversableAgent):
         self,
         name="GAIA Assistant",
         instructions: Optional[str] = None,
-        llm_config: Optional[Union[Dict, bool]] = config_setup(),
+        llm_config: Optional[Union[Dict, bool]] = llm_config,
         overwrite_instructions: bool = False,
     ):
         """
@@ -51,7 +51,7 @@ class GaiaAssistant(ConversableAgent):
             overwrite_instructions (bool): whether to overwrite the instructions of an existing assistant.
         """
         # Use AutoGen OpenAIWrapper to create a client
-        oai_wrapper = LLMConfig(**llm_config)
+        oai_wrapper = llm_config(**llm_config)
         if len(oai_wrapper._clients) > 1:
             logger.warning("GPT Assistant only supports one OpenAI client. Using the first client in the list.")
         self._openai_client = oai_wrapper._clients[0]
@@ -59,8 +59,6 @@ class GaiaAssistant(ConversableAgent):
         if openai_assistant_id is None:
             # try to find assistant by name first
             candidate_assistants = retrieve_assistants_by_name(name)
-
-
             if len(candidate_assistants) == 0:
                 logger.warning("assistant %s does not exist, creating a new assistant", name)
                 # create a new assistant
@@ -106,7 +104,7 @@ class GaiaAssistant(ConversableAgent):
                     "overwrite_instructions is False. Provided instructions will be used without permanently modifying the assistant in the API."
                 )
 
-        super().__init__(
+        super(classmethod).__init__(
             name=name,
             system_message=instructions,
             human_input_mode="NEVER",
@@ -117,7 +115,7 @@ class GaiaAssistant(ConversableAgent):
         self._openai_threads = {}
         self._unread_index = defaultdict(int)
         self.register_reply(Agent, GaiaAssistant._invoke_assistant)
-
+    @classmethod
     def _invoke_assistant(
         self,
         messages: Optional[List[Dict]] = None,
@@ -179,7 +177,7 @@ class GaiaAssistant(ConversableAgent):
 
         self._unread_index[sender] = len(self._oai_messages[sender]) + 1
         return True, response
-
+    @staticmethod
     def _get_run_response(self, thread, run):
         """
         Waits for and processes the response of a run from the OpenAI assistant.
@@ -243,7 +241,7 @@ class GaiaAssistant(ConversableAgent):
             else:
                 run_info = json.dumps(run.dict(), indent=2)
                 raise ValueError(f"Unexpected run status: {run.status}. Full run info:\n\n{run_info})")
-
+    @staticmethod
     def _wait_for_run(self, run_id: str, thread_id: str) -> Any:
         """
         Waits for a run to complete or reach a final state.
@@ -262,7 +260,7 @@ class GaiaAssistant(ConversableAgent):
             if in_progress:
                 time.sleep(self.llm_config.get("check_every_ms", 1000) / 1000)
         return run
-
+    @staticmethod
     def _format_assistant_message(self, message_content):
         """
         Formats the assistant's message to include annotations and citations.
@@ -294,30 +292,35 @@ class GaiaAssistant(ConversableAgent):
         # Add footnotes to the end of the message before displaying to user
         message_content.value += "\n" + "\n".join(citations)
         return message_content.value
-
+    @classmethod
     def can_execute_function(self, name: str) -> bool:
         """Whether the agent can execute the function."""
-        return False
-
+        #with self._lock:
+            #if name in self._functions:
+                #return True
+            #else:
+                #return False
+        pass
+    @classmethod
     def reset(self):
         """
         Resets the agent, clearing any existing conversation thread and unread message indices.
         """
-        super().reset()
+        super(classmethod).reset()
         for thread in self._openai_threads.values():
             # Delete the existing thread to start fresh in the next conversation
             self._openai_client.beta.threads.delete(thread.id)
         self._openai_threads = {}
         # Clear the record of unread messages
         self._unread_index.clear()
-
+    @classmethod
     def clear_history(self, agent: Optional[Agent] = None):
         """Clear the chat history of the agent.
 
         Args:
             agent: the agent with whom the chat history to clear. If None, clear the chat history with all agents.
         """
-        super().clear_history(agent)
+        super(classmethod).clear_history(agent)
         if self._openai_threads.get(agent, None) is not None:
             # Delete the existing thread to start fresh in the next conversation
             thread = self._openai_threads[agent]
@@ -325,7 +328,7 @@ class GaiaAssistant(ConversableAgent):
             self._openai_client.beta.threads.delete(thread.id)
             self._openai_threads.pop(agent)
             self._unread_index[agent] = 0
-
+    @classmethod
     def pretty_print_thread(self, thread):
         """Pretty print the thread."""
         if thread is None:
@@ -362,13 +365,17 @@ class GaiaAssistant(ConversableAgent):
 
     @property
     def openai_client(self):
+        """Return the openai client"""
         return self._openai_client
-
+    @property
     def get_assistant_instructions(self):
         """Return the assistant instructions from OAI assistant API"""
         return self._openai_assistant.instructions
-
+    @classmethod
     def delete_assistant(self):
         """Delete the assistant from OAI assistant API"""
         logger.warning("Permanently deleting assistant...")
         self._openai_client.beta.assistants.delete(self.assistant_id)
+        logger.warning("Assistant deleted.")
+        return True
+    

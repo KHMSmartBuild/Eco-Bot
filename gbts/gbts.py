@@ -6,7 +6,11 @@ import json
 import matplotlib.pyplot as plt
 import networkx as nx
 
+
 class PromptTreeNode:
+    """
+    Represents a node in the PromptTree.
+    """
     def __init__(self, role, message):
         """
         Initializes a new instance of the class.
@@ -123,12 +127,10 @@ def visualize_conversation_tree(conversation, structure=None):
     tree.visualize()
 
 # Load the JSON structure
-with open("c:/Users/User/OneDrive/Desktop/Buisness/KHM Smart Build/Coding/Projects/OCFS_projects/Eco-Bot/gbts/GBTS.json", "r", encoding="utf-8") as file:
+with open("../gbts/GBTS.json", "r", encoding="utf-8") as file:
     prompt_structure = json.load(file)
 
 # Sample usage:
-
-
 conversation = [
     {"role": "user", "message": "explain how i can make my own compost"},
     {"role": "assistant", "message": "Seed of Inquiry: The question you've posed is about creating your own compost. This is a fantastic initiative! Composting is an excellent way to recycle organic waste, reduce landfill contributions and enhance soil health in your garden."},

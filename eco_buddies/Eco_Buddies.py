@@ -7,22 +7,29 @@ from icecream import ic
 from dotenv import load_dotenv
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from agents.agent_classes import GeneralManager, Agent, DigitalTwinAgent
-from agents.config.config_setup import *
+from agents.config.config_setup import ConfigSetup
+
+ConfigSetup.load_config(os.path.join("agents", "config", "LLM_config.json"))
 
 # Load API keys from .env file
 load_dotenv(os.path.join("agents", "config", ".env"))
 openai_api_key = os.getenv("OPENAI_API_KEY")
 Orginization_ID = os.getenv("OpenAI_Orginization_ID")
 
-# set up llm config
-with create_config_json as config:
-    config["api_key"] = openai_api_key
-
-kwargs = {
+# Create LLM config and save or update the json file with the API key
+LLM_config = {
+    "model": "gpt-4-1106-preview",
     "api_key": openai_api_key,
-    "organization_id": Orginization_ID,
-    "model": print_config_json,
+    "base_url": Orginization_ID,
 }
+ConfigSetup.save_config(LLM_config, os.path.join("agents", "config", "LLM_config.json"))
+
+def kwargs(name: str, instruction: str, llm_config: dict = LLM_config):
+    name = input("Enter Buddy name: []")
+    if name == "":
+        name = "EcoBuddy"
+    instruction = input("Enter Buddy instruction: []")
+    return {"name": name, "instruction": instruction}
 
 
 
@@ -75,15 +82,30 @@ class BaseEcoBuddy(id='', thread_id='', **kwargs):
             thread_id = "your_thread_id"
             run_id = "your_run_id"
             return assistant_id, thread_id, run_id
-class EcoBuddy_Vision(BaseEcoBuddy):
+class EcoBuddy_Vision(BaseEcoBuddy, clip):
     def __init__(self):
         super().__init__()
         # Vision-specific properties and methods
-        self.vision_agent = ag.VisionAgent(Agent)
+        try:
+            self.vision_agent = ag.VisionAgent(Agent)# TODO:ADD VISION AGENT TO AGENT CLASSES
+        except:
+            self.vision_agent = ag.VisionAgent(DigitalTwinAgent)
+        self.clip = clip.load("ViT-B/32", device="cuda")
         # ... other vision-related initializations
+        # Add your code here for other vision-related initializations
+        # For example:
+        # vision_agent = VisionAgent()
+        # vision_agent.initialize()
+        # vision_agent.load_model()
+        # vision_agent.load_data()
+        # ...
 
     def analyze_image(self, image_path):
         # Method to analyze an image file or URL or path with clip
+        with open(image_path, "rb") as image_file:
+            image = image_file.read()
+        image = clip.__package__.load(image)
+        # Add your code here to analyze the image
         pass
 
     def analyze_video(self, video_path):
@@ -122,8 +144,37 @@ def create_eco_buddy(buddy_type, **kwargs):
     
 def create_custom_eco_buddy(buddy_type, **kwargs):
     # Implement your custom eco-buddy creation logic here
+    with input("Enter your custom eco-buddy code here: \n"):
+        """
+        Enter your custom eco-buddy code here: \n
+        eco_buddy = eval(input())
+
+        """
+        try:
+            eco_buddy = eval(input())
+            if isinstance(eco_buddy, BaseEcoBuddy):
+                return eco_buddy
+        except Exception as e:
+            print(f"Error creating custom eco-buddy: {e}")
+            return None
     
 
 # example usage
 # buddy = create_eco_buddy("vision")
 # buddy.analyze_image("path_to_image.jpg")
+
+# buddy = create_eco_buddy("audio")
+# buddy.analyze_audio("path_to_audio.wav")
+    
+# buddy = create_custom_eco_buddy("custom")
+# buddy.analyze_custom("path_to_custom_data")
+    
+if __name__ == "__main__":
+    buddy = create_eco_buddy("vision")
+    buddy.analyze_image("path_to_image.jpg")
+
+    buddy = create_eco_buddy("audio")
+    buddy.analyze_audio("path_to_audio.wav")
+    
+    buddy = create_custom_eco_buddy("custom")
+    buddy.analyze_custom("path_to_custom_data")
