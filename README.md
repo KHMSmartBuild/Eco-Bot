@@ -31,14 +31,15 @@ Eco-Bot integrates a revolutionary Hybrid Decentralized Memory System to enhance
 
 ## Table of Contents
 
-1. Installation
-2. Usage
-3. Project Structure
-4. Testing
-5. Deployment
-6. Contributing
-7. License
-8. Contact
+1. [Installation](#installation)
+2. [Usage](#usage)
+3. [Project Structure](#project-structure)
+4. [Documentation](#documentation)
+5. [Testing](#testing)
+6. [Deployment](#deployment)
+7. [Contributing](#contributing)
+8. [License](#license)
+9. [Contact](#contact)
 
 ## Installation
 
@@ -78,10 +79,51 @@ Eco-Bot integrates a revolutionary Hybrid Decentralized Memory System to enhance
 
 ## Project Structure
 
-- `agents/`: Contains the classes and logic for agents and digital twin agents.
-- `gbts/`: Contains the classes and logic for managing the GBTS and prompt tree system.
-- `streamlit_app/`: Contains the Streamlit application code for monitoring and management.
-- ... (other directories and files)
+```
+Eco-Bot/
+├── agents/              # Multi-agent system implementation
+├── gbts/                # Gaia-Bohm Thought Style conversation system
+├── eco_buddies/         # User-facing chat and vision interface
+├── streamlit_app/       # Web-based user interface
+├── models/              # Machine learning models
+├── data/                # Database and integrations
+├── APIGateway/          # API routing and handling
+├── SecurityLayer/       # Authentication and authorization
+├── RealTimeData/        # Real-time data processing
+├── scripts/             # Utility and helper scripts
+├── tests/               # Test suite
+├── docs/                # Comprehensive documentation
+└── docker/              # Docker configuration
+```
+
+For detailed information about each component, see the [Documentation](#documentation) section below.
+
+## Documentation
+
+Comprehensive documentation is available in the `docs/` directory:
+
+### 📚 Main Documentation
+- **[Documentation Index](docs/README.md)** - Complete documentation navigation
+- **[System Architecture](docs/ARCHITECTURE.md)** - Full system architecture and design
+
+### 🔧 Module Documentation
+- **[Agents Module](docs/scripts/agents.md)** - Multi-agent system using AutoGen
+- **[GBTS Module](docs/scripts/gbts.md)** - Conversation tree management
+- **[Eco-Buddies Module](docs/scripts/eco-buddies.md)** - User-facing chat and vision
+- **[Streamlit Application](docs/scripts/streamlit-app.md)** - Web interface
+- **[Data Integration](docs/scripts/data-integration.md)** - Database and external APIs
+- **[Utilities](docs/scripts/utilities.md)** - Helper scripts and tools
+
+### 📖 Additional Resources
+- **[Scripts Overview](docs/scripts/README.md)** - Index of all 88+ scripts
+- **[Modules Index](docs/modules/README.md)** - Detailed module documentation
+- **[API Reference](docs/api/README.md)** - API documentation (coming soon)
+
+### Quick Links by Topic
+- **Getting Started**: [Installation](#installation) → [Usage](#usage) → [Documentation Index](docs/README.md)
+- **For Developers**: [Architecture](docs/ARCHITECTURE.md) → [Agents](docs/scripts/agents.md) → [GBTS](docs/scripts/gbts.md)
+- **For Users**: [Streamlit App](docs/scripts/streamlit-app.md) → [Eco-Buddies](docs/scripts/eco-buddies.md)
+- **For DevOps**: [Deployment](#deployment) → [Utilities](docs/scripts/utilities.md)
 
 ## Testing
 
@@ -91,17 +133,26 @@ Run the test suite using the following command:
 pytest
 ```
 
+For more information about testing, see the [Testing Documentation](docs/modules/README.md#testing).
+
 ## Deployment
 Todo:
 Instructions for deploying the project using Docker, etc...
 
 ## Contributing
 
-Information about how others can contribute to the project...
+We welcome contributions to Eco-Bot! Please see our [Contributing Guide](CONTRIBUTING.md) for details on:
+- Code of conduct
+- Development workflow
+- Coding standards
+- Pull request process
+- Documentation requirements
+
+Before contributing, please review the relevant module documentation in the [docs/](docs/) directory.
 
 ## License
 
-Information about the project's license...
+This project is licensed under the terms specified in the [LICENSE](LICENSE) file.
 
 ## Contact
 
