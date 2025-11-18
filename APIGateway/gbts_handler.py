@@ -171,4 +171,8 @@ if __name__ == '__main__':
     print(result)
     
     # Run the Flask application
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    # Note: debug=False in production for security
+    # Set debug=True only in development with proper network isolation
+    import os
+    debug_mode = os.getenv('FLASK_DEBUG', 'False').lower() == 'true'
+    app.run(debug=debug_mode, host='0.0.0.0', port=5000)
