@@ -10,7 +10,8 @@ export default defineConfig({
       'tests/storyData.test.js', 
       'tests/storybook.test.js',
       'tests/logger.test.js',
-      'tests/dataManager.test.js'
+      'tests/dataManager.test.js',
+      'tests/serviceContainer.test.js'
     ],
     exclude: ['node_modules', 'storybook-static', 'tests/conversation_tree.test.js'],
     coverage: {

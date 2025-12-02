@@ -10,11 +10,22 @@ Eco-Bot is an interactive, educational AI bot that uses the Gaia-Bohm Thought St
 - **GBTS Guided Conversations**: A unique conversational structure inspired by nature
 - **Visual Representations**: Interactive tree visualizations of conversation flow
 - **Data-Driven Design**: JSON-based data management for stories and configurations
+- **Dynamic Story Frames**: Content containers ready for agent-generated narratives
 
 ## 📚 Component Categories
 
-### Components
-Core UI components used throughout the application:
+### Story Components
+
+Components designed for multi-agent dynamic content:
+
+- **StoryFrame**: Dynamic story frame with illustration placeholders, mood-based theming, and agent attribution
+  - Supports loading states for async content generation
+  - Interactive controls for user engagement
+  - Ready for agent-populated content
+
+### Core Components
+
+UI components used throughout the application:
 - **Avatar**: Displays eco-buddy profile images
 - **ChatBox**: Text input for user messages  
 - **ChatArea**: Combined avatar and message display
@@ -23,12 +34,101 @@ Core UI components used throughout the application:
 Interactive data visualizations:
 - **GBTSTree**: Tree visualization of conversation structure
 
-### Data Management
-The Storybook uses a centralized JSON data management system located in `stories/data/storyData.js` that provides:
+## 🤖 Multi-Agent Architecture
+
+### How Agents Populate Story Frames
+
+The StoryFrame component is designed to receive dynamically generated content:
+
+```jsx
+// Agent generates content for a story frame
+const frameContent = await ecoBot.generateStoryContent({
+  topic: "composting",
+  mood: "curious",
+  includeIllustration: true
+});
+
+// Render the frame with agent content
+<StoryFrame
+  id={frameContent.id}
+  title={frameContent.title}
+  content={frameContent.narrative}
+  illustration={frameContent.imageUrl}
+  agent="Eco-Bot"
+  mood={frameContent.mood}
+  interactive={true}
+/>
+```
+
+### Service Container (Dependency Injection)
+
+The system uses a service container for loose coupling:
+
+```jsx
+import { container } from './data/serviceContainer';
+
+// Register services
+container.registerSingleton('logger', () => logger);
+container.registerSingleton('dataManager', () => dataManager);
+container.registerTransient('storyGenerator', (logger) => {
+  return new StoryGenerator(logger);
+}, ['logger']);
+
+// Resolve services
+const storyGen = container.resolve('storyGenerator');
+```
+
+## 📊 Data Management
+
+### Centralized Data Layer
+
+Located in `stories/data/storyData.js`:
 - GBTS prompt structures
 - Visualization data
 - Eco-bot personality configurations
 - Sample conversations
+
+### DataManager Features
+
+```jsx
+import { dataManager } from './data/storyData';
+
+// Register a collection for story frames
+dataManager.registerCollection('storyFrames', []);
+
+// Add agent-generated content
+const frame = dataManager.add('storyFrames', {
+  title: "The Journey Begins",
+  content: "Once upon a time...",
+  mood: "curious",
+  agent: "Eco-Bot"
+});
+
+// Query frames by mood
+const curiousFrames = dataManager.query('storyFrames', 
+  frame => frame.mood === 'curious'
+);
+
+// Listen for data changes
+dataManager.on('itemAdded', ({ collection, item }) => {
+  console.log('New content added:', item);
+});
+```
+
+### Logging System
+
+Comprehensive logging for debugging:
+
+```jsx
+import { logger, LogCategory } from './data/logger';
+
+// Log with categories
+logger.info(LogCategory.DATA, 'Frame generated', { frameId: '123' });
+logger.validation.warn('Invalid mood specified');
+
+// View log history
+const recentLogs = logger.getHistory({ limit: 10 });
+```
 
 ## 🌱 GBTS - Gaia-Bohm Thought Style
 
@@ -50,6 +150,12 @@ The GBTS system structures conversations as a growing tree:
 npm run storybook
 ```
 
+### Running Tests
+
+```bash
+npm run test
+```
+
 ### Building Static Storybook
 
 ```bash
@@ -62,14 +168,20 @@ npm run build-storybook
 import Avatar from './stories/components/Avatar';
 import ChatBox from './stories/components/ChatBox';
 import ChatArea from './stories/components/ChatArea';
+import StoryFrame from './stories/components/StoryFrame';
 import GBTSTree from './stories/visualizations/GBTSTree';
 
 // Import data management utilities
 import { 
   gbtsVisualizationData, 
   ecoBuddies, 
-  validateGBTSData 
+  validateGBTSData,
+  dataManager,
+  logger
 } from './stories/data/storyData';
+
+// Import dependency injection
+import { container } from './stories/data/serviceContainer';
 ```
 
 ## 📊 JSON Data Structure
@@ -84,6 +196,21 @@ import {
   "links": [
     { "source": "Seed of Inquiry", "target": "Branch 1" }
   ]
+}
+```
+
+### Story Frame Data
+
+```json
+{
+  "id": "frame-1",
+  "title": "The Seed of Curiosity",
+  "chapter": 1,
+  "content": "Narrative text...",
+  "illustration": "https://...",
+  "mood": "curious",
+  "agent": "Eco-Bot",
+  "agentAvatar": "https://..."
 }
 ```
 
@@ -106,6 +233,13 @@ Eco-Bot uses a nature-inspired color palette:
 - **Light Green**: #A8E6CF
 - **Earth Brown**: #8B4513
 - **Wisdom Gold**: #FFD700
+
+### Mood Colors
+- **Curious**: Green tones (#4CAF50)
+- **Excited**: Orange tones (#FF9800)
+- **Thoughtful**: Blue tones (#2196F3)
+- **Wise**: Purple tones (#9C27B0)
+- **Playful**: Pink tones (#E91E63)
 
 ## 🔗 Resources
 
