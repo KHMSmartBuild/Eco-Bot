@@ -1,0 +1,114 @@
+# Welcome to Eco-Bot Storybook
+
+Welcome to the Eco-Bot component library documentation! This Storybook showcases the UI components and visualizations used in the Eco-Bot application - a multi-agent system focused on promoting ecological and environmental awareness.
+
+## 🌍 About Eco-Bot
+
+Eco-Bot is an interactive, educational AI bot that uses the Gaia-Bohm Thought Style (GBTS) to guide users through environmental topics. The system features:
+
+- **Multi-agent Communication**: Various eco-buddies that specialize in different environmental topics
+- **GBTS Guided Conversations**: A unique conversational structure inspired by nature
+- **Visual Representations**: Interactive tree visualizations of conversation flow
+- **Data-Driven Design**: JSON-based data management for stories and configurations
+
+## 📚 Component Categories
+
+### Components
+Core UI components used throughout the application:
+- **Avatar**: Displays eco-buddy profile images
+- **ChatBox**: Text input for user messages  
+- **ChatArea**: Combined avatar and message display
+
+### Visualizations
+Interactive data visualizations:
+- **GBTSTree**: Tree visualization of conversation structure
+
+### Data Management
+The Storybook uses a centralized JSON data management system located in `stories/data/storyData.js` that provides:
+- GBTS prompt structures
+- Visualization data
+- Eco-bot personality configurations
+- Sample conversations
+
+## 🌱 GBTS - Gaia-Bohm Thought Style
+
+The GBTS system structures conversations as a growing tree:
+
+1. **🌱 Seed of Inquiry** - The initial question
+2. **🌿 Branches of Understanding** - Related sub-topics
+3. **🍃 Leaves of Application** - Practical applications
+4. **🌳 Roots of Connection** - Deep underlying connections
+5. **🌲 Forest of Exploration** - Broader related topics
+6. **🌴 Canopy of Synthesis** - Integration of insights
+7. **🌾 Harvest of Wisdom** - Key takeaways
+
+## 🚀 Getting Started
+
+### Running Storybook
+
+```bash
+npm run storybook
+```
+
+### Building Static Storybook
+
+```bash
+npm run build-storybook
+```
+
+### Using Components
+
+```jsx
+import Avatar from './stories/components/Avatar';
+import ChatBox from './stories/components/ChatBox';
+import ChatArea from './stories/components/ChatArea';
+import GBTSTree from './stories/visualizations/GBTSTree';
+
+// Import data management utilities
+import { 
+  gbtsVisualizationData, 
+  ecoBuddies, 
+  validateGBTSData 
+} from './stories/data/storyData';
+```
+
+## 📊 JSON Data Structure
+
+### Visualization Data
+
+```json
+{
+  "nodes": [
+    { "id": "Seed of Inquiry", "group": 1 }
+  ],
+  "links": [
+    { "source": "Seed of Inquiry", "target": "Branch 1" }
+  ]
+}
+```
+
+### Eco-Buddy Data
+
+```json
+{
+  "id": "eco-bot",
+  "name": "Eco-Bot",
+  "avatar": "https://example.com/avatar.png",
+  "specialty": "General sustainability"
+}
+```
+
+## 🎨 Theming
+
+Eco-Bot uses a nature-inspired color palette:
+- **Primary Green**: #4CAF50
+- **Forest Green**: #228B22
+- **Light Green**: #A8E6CF
+- **Earth Brown**: #8B4513
+- **Wisdom Gold**: #FFD700
+
+## 🔗 Resources
+
+- [Eco-Bot Repository](https://github.com/KHMSmartBuild/Eco-Bot)
+- [Storybook Documentation](https://storybook.js.org/)
+- [React Documentation](https://react.dev/)
