@@ -35,7 +35,7 @@ function GBTSTree({ data, width, height, onNodeClick }) {
 
   if (!data || !data.nodes || !data.links) {
     return (
-      <div className="gbts-tree-error">
+      <div className="gbts-tree-error" style={{ width, height }}>
         <p>No data available for visualization</p>
       </div>
     );
@@ -58,7 +58,7 @@ function GBTSTree({ data, width, height, onNodeClick }) {
             
             return (
               <line
-                key={`link-${index}`}
+                key={`link-${link.source}-${link.target}`}
                 x1={sourcePos.x}
                 y1={sourcePos.y}
                 x2={targetPos.x}

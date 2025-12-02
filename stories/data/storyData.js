@@ -165,8 +165,15 @@ export const sampleConversations = {
 };
 
 // Data validation utilities
-export const validateGBTSData = (data) => {
-  if (!data || !Array.isArray(data.nodes) || !Array.isArray(data.links)) {
+export const validateGBTSData = (data, allowNull = false) => {
+  // Allow null data if explicitly permitted (for empty state)
+  if (data === null || data === undefined) {
+    return allowNull 
+      ? { valid: true, isEmpty: true } 
+      : { valid: false, error: 'Data is null or undefined' };
+  }
+  
+  if (!Array.isArray(data.nodes) || !Array.isArray(data.links)) {
     return { valid: false, error: 'Invalid data structure: must have nodes and links arrays' };
   }
   

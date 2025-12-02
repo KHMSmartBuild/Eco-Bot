@@ -123,10 +123,16 @@ describe('Story Data Management', () => {
       expect(result.valid).toBe(true);
     });
 
-    it('should reject null data', () => {
+    it('should reject null data by default', () => {
       const result = validateGBTSData(null);
       expect(result.valid).toBe(false);
       expect(result.error).toBeDefined();
+    });
+
+    it('should accept null data when allowNull is true', () => {
+      const result = validateGBTSData(null, true);
+      expect(result.valid).toBe(true);
+      expect(result.isEmpty).toBe(true);
     });
 
     it('should reject data without nodes', () => {

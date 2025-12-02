@@ -17,7 +17,7 @@ function ChatArea({ children, avatarSrc, avatarAlt, messages, userName }) {
       <div className="messages">
         {messages && messages.map((msg, index) => (
           <div 
-            key={index} 
+            key={`msg-${index}-${msg.role}-${msg.content.slice(0, 20)}`} 
             className={`message ${msg.role === 'user' ? 'message-user' : 'message-bot'}`}
           >
             <span className="message-role">{msg.role}:</span>
