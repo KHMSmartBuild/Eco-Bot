@@ -3,7 +3,16 @@
  * 
  * This module provides utilities for managing JSON data used in Storybook stories.
  * It includes data loaders, validators, and sample datasets for testing and documentation.
+ * 
+ * @module storyData
+ * @version 2.0.0
  */
+
+import { logger, LogCategory, LogLevel } from './logger.js';
+import { dataManager } from './dataManager.js';
+
+// Initialize logger for this module
+logger.info(LogCategory.SYSTEM, 'Story Data module initialized');
 
 // GBTS Prompts Structure - from GBTS.json
 export const gbtsPrompts = {
@@ -164,35 +173,53 @@ export const sampleConversations = {
   ]
 };
 
-// Data validation utilities
+// Data validation utilities with logging
 export const validateGBTSData = (data, allowNull = false) => {
+  logger.validation.debug('Validating GBTS data', { allowNull, hasData: data !== null });
+  
   // Allow null data if explicitly permitted (for empty state)
   if (data === null || data === undefined) {
-    return allowNull 
+    const result = allowNull 
       ? { valid: true, isEmpty: true } 
       : { valid: false, error: 'Data is null or undefined' };
+    
+    if (!result.valid) {
+      logger.validation.warn('Validation failed: null data not allowed');
+    }
+    return result;
   }
   
   if (!Array.isArray(data.nodes) || !Array.isArray(data.links)) {
+    logger.validation.error('Validation failed: invalid data structure');
     return { valid: false, error: 'Invalid data structure: must have nodes and links arrays' };
   }
   
   if (data.nodes.length === 0) {
+    logger.validation.warn('Validation failed: empty nodes array');
     return { valid: false, error: 'Nodes array cannot be empty' };
   }
   
   const nodeIds = new Set(data.nodes.map(n => n.id));
   for (const link of data.links) {
     if (!nodeIds.has(link.source) || !nodeIds.has(link.target)) {
+      logger.validation.error('Validation failed: invalid link reference', { link });
       return { valid: false, error: `Invalid link: source or target not found` };
     }
   }
   
+  logger.validation.info('Validation passed', { 
+    nodeCount: data.nodes.length, 
+    linkCount: data.links.length 
+  });
   return { valid: true };
 };
 
-// Data transformation utilities
+// Data transformation utilities with logging
 export const transformConversationToGBTS = (conversation) => {
+  logger.data.debug('Transforming conversation to GBTS format', { 
+    messageCount: conversation.length 
+  });
+  
   const nodes = [];
   const links = [];
   
@@ -213,8 +240,51 @@ export const transformConversationToGBTS = (conversation) => {
     }
   });
   
+  logger.data.info('Conversation transformed successfully', { 
+    nodeCount: nodes.length, 
+    linkCount: links.length 
+  });
+  
   return { nodes, links };
 };
+
+// Initialize data collections in the data manager
+const initializeDataCollections = () => {
+  logger.data.info('Initializing data collections');
+  
+  // Register eco-buddies collection
+  dataManager.registerCollection('ecoBuddies', ecoBuddies);
+  
+  // Register conversations collection
+  const allConversations = Object.entries(sampleConversations).map(([key, messages]) => ({
+    id: key,
+    name: key.charAt(0).toUpperCase() + key.slice(1),
+    messages,
+    createdAt: new Date().toISOString()
+  }));
+  dataManager.registerCollection('conversations', allConversations);
+  
+  // Register GBTS prompts as a collection
+  const promptsArray = Object.entries(gbtsPrompts).map(([stage, data]) => ({
+    id: stage.toLowerCase().replace(/\s+/g, '-'),
+    stage,
+    ...data
+  }));
+  dataManager.registerCollection('gbtsPrompts', promptsArray);
+  
+  logger.data.info('Data collections initialized', dataManager.getStats());
+};
+
+// Initialize on module load
+try {
+  initializeDataCollections();
+} catch (error) {
+  logger.error(LogCategory.SYSTEM, 'Failed to initialize data collections', error);
+}
+
+// Export logger and data manager for external use
+export { logger, LogLevel, LogCategory } from './logger.js';
+export { dataManager, DataManager } from './dataManager.js';
 
 // Export default data manager
 export default {

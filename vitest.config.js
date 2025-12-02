@@ -6,7 +6,12 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'node',
-    include: ['tests/storyData.test.js', 'tests/storybook.test.js'],
+    include: [
+      'tests/storyData.test.js', 
+      'tests/storybook.test.js',
+      'tests/logger.test.js',
+      'tests/dataManager.test.js'
+    ],
     exclude: ['node_modules', 'storybook-static', 'tests/conversation_tree.test.js'],
     coverage: {
       provider: 'v8',
