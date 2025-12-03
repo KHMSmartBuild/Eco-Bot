@@ -1,0 +1,130 @@
+/* GBTS Tree Visualization Styles */
+.gbts-tree-container {
+  position: relative;
+  background: linear-gradient(135deg, #f8fff8 0%, #e8f5e9 100%);
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.gbts-tree-svg {
+  display: block;
+}
+
+.gbts-tree-error {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 300px;
+  background-color: #fff3cd;
+  border-radius: 8px;
+  color: #856404;
+}
+
+/* Links */
+.gbts-link {
+  transition: stroke-opacity 0.3s, stroke-width 0.3s;
+}
+
+.gbts-link:hover {
+  stroke-opacity: 1;
+  stroke-width: 3;
+}
+
+/* Nodes */
+.gbts-node {
+  transition: transform 0.2s;
+}
+
+.gbts-node:hover {
+  transform: scale(1.2);
+}
+
+.node-circle {
+  transition: filter 0.2s;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+.gbts-node:hover .node-circle {
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+}
+
+.node-label {
+  pointer-events: none;
+  font-family: 'Arial', sans-serif;
+  font-weight: bold;
+}
+
+/* Legend */
+.gbts-legend {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 12px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  font-size: 12px;
+}
+
+.gbts-legend h4 {
+  margin: 0 0 8px 0;
+  color: #333;
+  font-size: 14px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.legend-color {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 1px solid #fff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* Tooltip */
+.gbts-tooltip {
+  position: absolute;
+  padding: 8px 12px;
+  background: #333;
+  color: white;
+  border-radius: 6px;
+  font-size: 12px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s;
+  z-index: 100;
+}
+
+.gbts-tooltip.visible {
+  opacity: 1;
+}
+
+/* Animations */
+@keyframes nodeAppear {
+  from {
+    opacity: 0;
+    transform: scale(0);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.gbts-node {
+  animation: nodeAppear 0.5s ease-out forwards;
+}
+
+.gbts-node:nth-child(1) { animation-delay: 0.1s; }
+.gbts-node:nth-child(2) { animation-delay: 0.2s; }
+.gbts-node:nth-child(3) { animation-delay: 0.3s; }
+.gbts-node:nth-child(4) { animation-delay: 0.4s; }
+.gbts-node:nth-child(5) { animation-delay: 0.5s; }
+.gbts-node:nth-child(6) { animation-delay: 0.6s; }
