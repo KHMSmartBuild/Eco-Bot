@@ -8,7 +8,7 @@
  * @version 2.0.0
  */
 
-import { logger, LogCategory, LogLevel } from './logger.js';
+import { logger, LogCategory } from './logger.js';
 import { dataManager } from './dataManager.js';
 
 // Initialize logger for this module

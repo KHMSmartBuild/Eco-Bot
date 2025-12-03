@@ -62,10 +62,11 @@ function StoryFrame({
 
   return (
     <article 
-      className={`story-frame story-frame--${variant} ${loading ? 'story-frame--loading' : ''}`}
+      className={`story-frame story-frame--${variant} ${loading ? 'story-frame--loading' : ''} story-frame--${animationState}`}
       style={currentMoodStyle}
       data-frame-id={id}
       data-mood={mood}
+      data-animation-state={animationState}
     >
       {/* Header Section */}
       <header className="story-frame__header">
