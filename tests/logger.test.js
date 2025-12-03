@@ -117,8 +117,8 @@ describe('Logger', () => {
     });
 
     it('should respect minimum log level', () => {
-      const debugSpy = vi.spyOn(console, 'debug').mockImplementation(() => {});
-      const infoSpy = vi.spyOn(console, 'info').mockImplementation(() => {});
+      vi.spyOn(console, 'debug').mockImplementation(() => {});
+      vi.spyOn(console, 'info').mockImplementation(() => {});
       
       logger.setLevel(LogLevel.INFO);
       logger.debug(LogCategory.DATA, 'Debug message');

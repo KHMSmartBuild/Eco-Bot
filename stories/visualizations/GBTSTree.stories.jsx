@@ -1,5 +1,5 @@
 import GBTSTree from './GBTSTree';
-import { gbtsVisualizationData, validateGBTSData } from '../data/storyData';
+import { gbtsVisualizationData } from '../data/storyData';
 
 /**
  * GBTSTree component visualizes the Gaia-Bohm Thought Style conversation structure.

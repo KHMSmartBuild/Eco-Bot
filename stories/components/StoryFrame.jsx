@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import './StoryFrame.css';
 
@@ -33,15 +33,6 @@ function StoryFrame({
   loading
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [animationState, setAnimationState] = useState('idle');
-
-  useEffect(() => {
-    if (loading) {
-      setAnimationState('loading');
-    } else {
-      setAnimationState('ready');
-    }
-  }, [loading]);
 
   const handleInteraction = (action) => {
     if (onInteraction) {
