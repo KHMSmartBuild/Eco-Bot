@@ -85,11 +85,93 @@ Eco-Bot integrates a revolutionary Hybrid Decentralized Memory System to enhance
 
 ## Testing
 
-Run the test suite using the following command:
+Run the test suite using the following commands:
 
 ```bash
+# Run all tests
+npm run test
+
+# Run tests in watch mode
+npm run test:watch
+
+# Run tests with coverage
+npm run test:coverage
+
+# Run Python tests
 pytest
 ```
+
+## 📚 Storybook Component Library
+
+Eco-Bot includes a fully-documented Storybook component library for developing, testing, and showcasing UI components.
+
+### Running Storybook
+
+Start the Storybook development server:
+
+```bash
+npm run storybook
+```
+
+This will open Storybook at `http://localhost:6006`.
+
+### Building Storybook
+
+Build a static version for deployment:
+
+```bash
+npm run build-storybook
+```
+
+The output will be in the `storybook-static/` directory.
+
+### Component Categories
+
+#### Components
+Core UI components used throughout the application:
+- **Avatar** - Displays eco-buddy profile images with customizable sizes
+- **ChatBox** - Text input component for user messages
+- **ChatArea** - Combined avatar and message display for conversations
+
+#### Visualizations
+Interactive data visualizations:
+- **GBTSTree** - Tree visualization of the Gaia-Bohm Thought Style conversation structure
+
+### JSON Data Management
+
+The Storybook uses a centralized JSON data management system located in `stories/data/storyData.js` that provides:
+
+- **GBTS Prompts** - Structured prompts for each GBTS stage
+- **Visualization Data** - Node and link data for tree visualizations
+- **Eco-Bot Personality** - Character traits and behaviors
+- **Sample Conversations** - Example dialogues for testing
+
+Example usage:
+```javascript
+import { 
+  gbtsVisualizationData, 
+  ecoBuddies, 
+  validateGBTSData 
+} from './stories/data/storyData';
+
+// Validate data before use
+const result = validateGBTSData(myData);
+if (result.valid) {
+  // Use the data
+}
+```
+
+### GBTS Structure
+
+The Gaia-Bohm Thought Style structures conversations as a growing tree:
+
+1. 🌱 **Seed of Inquiry** - The initial question
+2. 🌿 **Branches of Understanding** - Related sub-topics
+3. 🍃 **Leaves of Application** - Practical applications
+4. 🌳 **Roots of Connection** - Deep underlying connections
+5. 🌲 **Forest of Exploration** - Broader related topics
+6. 🌴 **Canopy of Synthesis** - Integration of insights
+7. 🌾 **Harvest of Wisdom** - Key takeaways
 
 ## Deployment
 Todo:
