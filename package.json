@@ -1,13 +1,40 @@
 {
+  "type": "module",
+  "name": "eco-bot",
+  "version": "1.0.0",
+  "description": "EcoBot - Multi-agent system for environmental awareness",
   "dependencies": {
     "@notionhq/client": "^2.2.14",
     "d3": "^7.8.5",
     "js-yaml": "^4.1.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
     "three": "^0.158.0",
     "winston": "^3.11.0"
   },
   "devDependencies": {
+    "@chromatic-com/storybook": "^4.1.3",
+    "@storybook/addon-a11y": "^10.1.2",
+    "@storybook/addon-docs": "^10.1.2",
+    "@storybook/addon-onboarding": "^10.1.2",
+    "@storybook/addon-vitest": "^10.1.2",
+    "@storybook/react-vite": "^10.1.2",
     "@types/d3": "^7.4.3",
-    "@types/three": "^0.159.0"
+    "@types/three": "^0.159.0",
+    "@vitejs/plugin-react": "^5.1.1",
+    "@vitest/browser-playwright": "^4.0.14",
+    "@vitest/coverage-v8": "^4.0.14",
+    "jsdom": "^27.2.0",
+    "playwright": "^1.57.0",
+    "prop-types": "^15.8.1",
+    "storybook": "^10.1.2",
+    "vitest": "^4.0.14"
+  },
+  "scripts": {
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
   }
 }
